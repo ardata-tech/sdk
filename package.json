@@ -2,7 +2,7 @@
   "name": "@valsamonte/delta-sdk",
   "version": "0.1.0",
   "license": "MIT",
-  "author": "Val",
+  "author": "Val Allen Samonte",
   "main": "dist/index.js",
   "module": "dist/deltasdk.esm.js",
   "typings": "dist/index.d.ts",
@@ -25,10 +25,13 @@
     }
   },
   "prettier": {
-    "printWidth": 80,
-    "semi": true,
+    "semi": false,
+    "tabWidth": 2,
     "singleQuote": true,
-    "trailingComma": "es5"
+    "jsxSingleQuote": true,
+    "trailingComma": "none",
+    "arrowParens": "always",
+    "endOfLine": "auto"
   },
   "jest": {
     "testEnvironment": "node"
@@ -50,6 +53,7 @@
   "devDependencies": {
     "@size-limit/preset-small-lib": "^8.2.6",
     "@tsconfig/recommended": "^1.0.2",
+    "@types/jest": "^29.5.3",
     "dts-cli": "^2.0.3",
     "husky": "^8.0.3",
     "size-limit": "^8.2.6",
