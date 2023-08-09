@@ -1,5 +1,5 @@
 {
-  "name": "deltasdk",
+  "name": "@valsamonte/delta-sdk",
   "version": "0.1.0",
   "license": "MIT",
   "author": "Val",
@@ -46,5 +46,18 @@
       "path": "dist/deltasdk.esm.js",
       "limit": "10 KB"
     }
-  ]
+  ],
+  "devDependencies": {
+    "@size-limit/preset-small-lib": "^8.2.6",
+    "@tsconfig/recommended": "^1.0.2",
+    "dts-cli": "^2.0.3",
+    "husky": "^8.0.3",
+    "size-limit": "^8.2.6",
+    "tslib": "^2.6.1",
+    "typescript": "^5.1.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/val-samonte/delta-sdk.git"
+  }
 }
