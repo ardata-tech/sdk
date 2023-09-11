@@ -1,5 +1,5 @@
 {
-  "name": "delta-storage/sdk",
+  "name": "@delta-storage/sdk",
   "version": "0.0.1",
   "license": "MIT",
   "author": "Delta Storage",
