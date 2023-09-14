@@ -72,6 +72,20 @@ class DeltaStorageSDK {
     })
   }
 
+  async getDirectoryById(id?: string) {
+    verifyAuthorizedCommand(
+      this.scope,
+      OPERATION_SCOPE.READ_DIRECTORY,
+      'READ_DIRECTORY is not allowed.'
+    )
+
+    return axios.get(`${this.host}/api/directory/get/${id ?? ''}`, {
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
+      }
+    })
+  }
+
   async createDirectory(name: string, parentDirectoryId?: string) {
     verifyAuthorizedCommand(
       this.scope,
