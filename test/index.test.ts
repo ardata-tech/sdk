@@ -1,7 +1,7 @@
 import DeltaStorageSDK from '../src/index'
 
 const apiKey =
-  '00000000-0000-0000-0000-000000000000.0.f2e395ca-a158-48d5-9bcc-d00b952a7c2f.31dFnqgGjnh1NbguqD7CKQh7DzvaCe9sraytpWn3E9Lu'
+  '00000000-0000-0000-0000-000000000000.0.f2e395ca-a158-48d5-9bcc-d00b952a7c2f.31dFnqgGjnh1NbguqD7CKQh7DzvaCe9sraytpWn3E9Lu.EST29cfe67f-e3c6-460e-b9a2-0b65e968232fARY'
 
 let sdk: DeltaStorageSDK
 let directoryId: string
