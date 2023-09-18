@@ -61,16 +61,20 @@ class DeltaStorageSDK {
       OPERATION_SCOPE.UPLOAD_FILE,
       'UPLOAD_FILE is not allowed.'
     )
+
+    const formData = new FormData()
+    formData.append('name', name)
+    formData.append('file', file)
+    formData.append('collectionName', collectionName)
+    formData.append('directoryId', directoryId)
+    formData.append('edgeToken', this.edgeToken)
+
     //TODO modify edgeToken to be included in apiKey
-    return axios.post(
-      `${this.host}/api/files/upload`,
-      { name, file, collectionName, directoryId, edgeToken: this.edgeToken },
-      {
-        headers: {
-          Authorization: `Bearer ${this.apiKey}`
-        }
+    return axios.post(`${this.host}/api/files/upload`, formData, {
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
       }
-    )
+    })
   }
 
   async deleteFile(id: string) {
