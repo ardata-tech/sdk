@@ -25,37 +25,65 @@ class DeltaStorageSDK {
   public readonly apiKey: string
   public readonly scope: number
   public readonly host: string
+  public readonly edgeToken: string
 
   constructor(config: DeltaStorageConfig) {
-    const [_apiKeyId, scope, _userId, _hash] = config.apiKey.split('.')
+    const [_apiKeyId, scope, _userId, _hash, _edgeToken] =
+      config.apiKey.split('.')
     this.apiKey = config.apiKey
     this.scope = parseInt(scope)
     this.host = config.host ?? ''
     this.host = this.host.slice(-1) === '/' ? this.host.slice(0, -1) : this.host
+    this.edgeToken = _edgeToken
   }
 
-  async readFile() {
+  async readFile(id?: string) {
     verifyAuthorizedCommand(
       this.scope,
       OPERATION_SCOPE.READ_FILE,
       'READ_FILE is not allowed.'
     )
+    return axios.get(`${this.host}/api/files/${id ?? ''}`, {
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
+      }
+    })
   }
 
-  async uploadFile() {
+  async uploadFile(
+    name: string,
+    file: any,
+    collectionName: string,
+    directoryId: string
+  ) {
     verifyAuthorizedCommand(
       this.scope,
       OPERATION_SCOPE.UPLOAD_FILE,
       'UPLOAD_FILE is not allowed.'
     )
+    //TODO modify edgeToken to be included in apiKey
+    return axios.post(
+      `${this.host}/api/files/upload`,
+      { name, file, collectionName, directoryId, edgeToken: this.edgeToken },
+      {
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`
+        }
+      }
+    )
   }
 
-  async deleteFile() {
+  async deleteFile(id: string) {
     verifyAuthorizedCommand(
       this.scope,
       OPERATION_SCOPE.DELETE_FILE,
       'DELETE_FILE is not allowed.'
     )
+    return axios.delete(`${this.host}/api/files/${id}`, {
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
+      }
+    })
   }
 
   async readDirectory(id?: string) {
@@ -108,7 +136,11 @@ class DeltaStorageSDK {
     )
   }
 
-  async move(parentId: string, childrenIds: string[]) {
+  async move(
+    parentId: string,
+    childrenIds: string[],
+    childrenFileIds?: string[]
+  ) {
     verifyAuthorizedCommand(
       this.scope,
       OPERATION_SCOPE.CREATE_DIRECTORY | OPERATION_SCOPE.DELETE_DIRECTORY,
@@ -117,7 +149,7 @@ class DeltaStorageSDK {
 
     return axios.put(
       `${this.host}/api/directory/${parentId}`,
-      { move: childrenIds },
+      { move: childrenIds, moveFiles: childrenFileIds },
       {
         headers: {
           Authorization: `Bearer ${this.apiKey}`
