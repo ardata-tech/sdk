@@ -1,7 +1,6 @@
 import { OPERATION_SCOPE } from './constants'
-const axios = require('axios').default
-const io = require('socket.io-client')
-
+import axios from 'axios'
+import { Socket, io } from 'socket.io-client'
 export interface DeltaStorageConfig {
   apiKey: string
   host?: string
@@ -28,7 +27,7 @@ class DeltaStorageSDK {
   public readonly scope: number
   public readonly host: string
   public readonly edgeToken: string
-  public readonly socket: any
+  public readonly listener: Socket
 
   constructor(config: DeltaStorageConfig) {
     const [_apiKeyId, scope, _userId, _hash, _edgeToken] =
@@ -38,11 +37,11 @@ class DeltaStorageSDK {
     this.host = config.host ?? ''
     this.host = this.host.slice(-1) === '/' ? this.host.slice(0, -1) : this.host
     this.edgeToken = _edgeToken
-    this.socket = io(this.host, {
+    this.listener = io(this.host, {
       auth: {
         token: config.hookToken
       }
-    })
+    }).connect()
   }
 
   async readFile(id?: string) {
@@ -183,15 +182,11 @@ class DeltaStorageSDK {
       }
     })
   }
-
   onDirectoryChange(callback: (data: any) => void) {
-    return this.socket.on('directory:change', callback)
-  }
-  onFileChange(callback: (data: any) => void) {
-    return this.socket.on('file:change', callback)
+    return this.listener.on('directory:change', callback)
   }
   disconnectWebSocket() {
-    this.socket.disconnect(true)
+    this.listener.disconnect()
   }
 }
 export default DeltaStorageSDK
