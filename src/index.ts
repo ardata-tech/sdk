@@ -104,6 +104,22 @@ class DeltaStorageSDK {
     })
   }
 
+  async readDirectoryBySegment(segments: string) {
+    verifyAuthorizedCommand(
+      this.scope,
+      OPERATION_SCOPE.READ_DIRECTORY,
+      'READ_DIRECTORY is not allowed.'
+    )
+
+    const query = segments.split('/').join('&segment=')
+
+    return axios.get(`${this.host}/api/directory?segment=${query}`, {
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
+      }
+    })
+  }
+
   async createDirectory(name: string, parentDirectoryId?: string) {
     verifyAuthorizedCommand(
       this.scope,
