@@ -1,10 +1,10 @@
 import { OPERATION_SCOPE } from './constants'
 import axios from 'axios'
 import { Socket, io } from 'socket.io-client'
+import { Directories } from './types'
 export interface DeltaStorageConfig {
   apiKey: string
   host?: string
-  hookToken?: string
 }
 
 const isCommandAllowed = (scope: number, flag: number) => {
@@ -39,7 +39,7 @@ class DeltaStorageSDK {
     this.edgeToken = _edgeToken
     this.listener = io(this.host, {
       auth: {
-        token: config.hookToken
+        token: config.apiKey
       }
     }).connect()
   }
@@ -97,7 +97,12 @@ class DeltaStorageSDK {
     })
   }
 
-  async readDirectory(id?: string) {
+  async readDirectory(id?: string): Promise<{
+    data: {
+      directories: Directories[]
+      files: any[] // todo
+    }
+  }> {
     verifyAuthorizedCommand(
       this.scope,
       OPERATION_SCOPE.READ_DIRECTORY,
@@ -182,10 +187,23 @@ class DeltaStorageSDK {
       }
     })
   }
+
+  async onReadDirectoryEvent(
+    id: string,
+    onChange: (directory: { directories: Directories[]; files: any[] }) => void
+  ) {
+    this.listener.connect()
+    this.listener.emit('directory:initialize')
+    this.onDirectoryChange(async () => {
+      const latestDirectory = (await this.readDirectory(id)).data
+      onChange(latestDirectory)
+    })
+  }
+
   onDirectoryChange(callback: (data: any) => void) {
     return this.listener.on('directory:change', callback)
   }
-  disconnectWebSocket() {
+  disconnect() {
     this.listener.disconnect()
   }
 }
