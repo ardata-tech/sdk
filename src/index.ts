@@ -1,6 +1,7 @@
 import { OPERATION_SCOPE } from './constants'
-const axios = require('axios').default
-
+import axios from 'axios'
+import { Socket, io } from 'socket.io-client'
+import { Directories } from './types'
 export interface DeltaStorageConfig {
   apiKey: string
   host?: string
@@ -26,6 +27,7 @@ class DeltaStorageSDK {
   public readonly scope: number
   public readonly host: string
   public readonly edgeToken: string
+  public readonly listener: Socket
 
   constructor(config: DeltaStorageConfig) {
     const [_apiKeyId, scope, _userId, _hash, _edgeToken] =
@@ -35,6 +37,11 @@ class DeltaStorageSDK {
     this.host = config.host ?? ''
     this.host = this.host.slice(-1) === '/' ? this.host.slice(0, -1) : this.host
     this.edgeToken = _edgeToken
+    this.listener = io(this.host, {
+      auth: {
+        token: config.apiKey
+      }
+    }).connect()
   }
 
   async readFile(id?: string) {
@@ -90,7 +97,12 @@ class DeltaStorageSDK {
     })
   }
 
-  async readDirectory(id?: string) {
+  async readDirectory(id?: string): Promise<{
+    data: {
+      directories: Directories[]
+      files: any[] // todo
+    }
+  }> {
     verifyAuthorizedCommand(
       this.scope,
       OPERATION_SCOPE.READ_DIRECTORY,
@@ -191,6 +203,24 @@ class DeltaStorageSDK {
       }
     })
   }
-}
 
+  async onReadDirectoryEvent(
+    id: string,
+    onChange: (directory: { directories: Directories[]; files: any[] }) => void
+  ) {
+    this.listener.connect()
+    this.listener.emit('directory:initialize')
+    this.onDirectoryChange(async () => {
+      const latestDirectory = (await this.readDirectory(id)).data
+      onChange(latestDirectory)
+    })
+  }
+
+  onDirectoryChange(callback: (data: any) => void) {
+    return this.listener.on('directory:change', callback)
+  }
+  disconnect() {
+    this.listener.disconnect()
+  }
+}
 export default DeltaStorageSDK
