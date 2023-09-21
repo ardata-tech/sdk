@@ -208,16 +208,21 @@ class DeltaStorageSDK {
     id: string,
     onChange: (directory: { directories: Directories[]; files: any[] }) => void
   ) {
-    this.listener.connect()
-    this.listener.emit('directory:initialize')
-    this.onDirectoryChange(async () => {
+    this.listener.emit('directory:initialize', id)
+    this.listener.on('directory:change', async () => {
       const latestDirectory = (await this.readDirectory(id)).data
       onChange(latestDirectory)
     })
   }
+  disconnectReadDirectoryEvent() {
+    this.listener.off('directory:change')
+  }
 
   onDirectoryChange(callback: (data: any) => void) {
     return this.listener.on('directory:change', callback)
+  }
+  connect() {
+    this.listener.connect()
   }
   disconnect() {
     this.listener.disconnect()
