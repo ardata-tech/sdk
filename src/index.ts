@@ -1,6 +1,6 @@
 import { OPERATION_SCOPE } from './constants'
 import axios from 'axios'
-import { Socket, io } from 'socket.io-client'
+import { type Socket, io } from 'socket.io-client'
 import { Directories } from './types'
 export interface DeltaStorageConfig {
   apiKey: string
@@ -41,7 +41,7 @@ class DeltaStorageSDK {
       auth: {
         token: config.apiKey
       }
-    }).connect()
+    })
   }
 
   async readFile(id?: string) {
