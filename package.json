@@ -55,7 +55,6 @@
     "@size-limit/preset-small-lib": "^8.2.6",
     "@tsconfig/recommended": "^1.0.2",
     "@types/jest": "^29.5.3",
-    "@types/socket.io-client": "^3.0.0",
     "dts-cli": "^2.0.3",
     "husky": "^8.0.3",
     "size-limit": "^8.2.6",
