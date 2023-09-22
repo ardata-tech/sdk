@@ -106,6 +106,23 @@ class DeltaStorageSDK {
     })
   }
 
+  async renameFile(id: string, name: string) {
+    verifyAuthorizedCommand(
+      this.scope,
+      OPERATION_SCOPE.UPLOAD_FILE | OPERATION_SCOPE.DELETE_FILE,
+      'RENAME_FILE is not allowed.'
+    )
+    return axios.put(
+      `${this.host}/api/files/${id}`,
+      { name },
+      {
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`
+        }
+      }
+    )
+  }
+
   async readDirectory(id?: string): Promise<{
     data: {
       directories: Directories[]
