@@ -50,7 +50,6 @@ Once you've set up your instance, using the delta.storage SDK is easy.
 <br />
 
 <a name="#getTotalSize-anchor"></a>
-
 ### `getTotalSize`
 
 Returns the total size of files uploaded to hot.delta.storage.
@@ -60,55 +59,46 @@ const totalSize: bigint = await sdk.getTotalSize()
 ```
 
 <a name="#readDirectory-anchor"></a>
-
 ### `readDirectory`
 
 Returns the `Files` and `Directories` contained in the given directory.
 
 <a name="#readDirectoryBySegment-anchor"></a>
-
 ### `readDirectoryBySegment`
 
 Returns the `Files` and `Directories` contained in the given directory by segment.
 
 <a name="#createDirectory-anchor"></a>
-
 ### `createDirectory`
 
 Create a new directory.
 
 <a name="#renameDirectory-anchor"></a>
-
 ### `renameDirectory`
 
 Rename a directory.
 
 <a name="#move-anchor"></a>
-
 ### `move`
 
 Move all `Files` and `Directories` to the given `Directory` ID.
 
 <a name="#deleteDirectory-anchor"></a>
-
 ### `deleteDirectory`
 
 Delete a directory and its contents.
 
 <a name="#readFile-anchor"></a>
-
 ### `readFile`
 
 Read the file and its metadata.
 
 <a name="#uploadFile-anchor"></a>
-
 ### `uploadFile`
 
 Upload a new file.
 
 <a name="#deleteFile-anchor"></a>
-
 ### `deleteFile`
 
 Delete a file.
