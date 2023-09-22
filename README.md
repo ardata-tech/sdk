@@ -1,103 +1,114 @@
-# DTS User Guide
+# delta.storage SDK
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with DTS. Let’s get you oriented with what’s here and how to use it.
+Official SDK for [delta.storage](https://delta.storage/)
 
-> This DTS setup is meant for developing libraries (not apps!) that can be published to NPM. If you’re looking to build a Node app, you could use `ts-node-dev`, plain `ts-node`, or simple `tsc`.
+## Overview
 
-> If you’re new to TypeScript, checkout [this handy cheatsheet](https://devhints.io/typescript)
+The delta.storage SDK provides asbtraction for interacting with the hot [delta.storage API](https://docs.delta.storage/).
 
-## Commands
+## Installation
 
-DTS scaffolds your new library inside `/src`.
-
-To run DTS, use:
-
-```bash
-npm start # or yarn start
+```
+npm install --save @delta-storage/sdk
 ```
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
+## Setup
 
-To do a one-off build, use `npm run build` or `yarn build`.
+Acquire your `API_KEY` from your [hot.delta.storage](https://hot.delta.storage) account. After installing, you can use the SDK as follows:
 
-To run tests, use `npm test` or `yarn test`.
+```typescript
+import DeltaStorageSDK from '@delta-storage/sdk'
 
-## Configuration
-
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
-
-### Jest
-
-Jest tests are set up to run with `npm test` or `yarn test`.
-
-### Bundle Analysis
-
-[`size-limit`](https://github.com/ai/size-limit) is set up to calculate the real cost of your library with `npm run size` and visualize the bundle with `npm run analyze`.
-
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/src
-  index.ts        # EDIT THIS
-/test
-  index.test.ts   # EDIT THIS
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
+const sdk = new DeltaStorageSDK({
+  apiKey: 'YOUR API KEY'
+})
 ```
 
-### Rollup
+## Usage
 
-DTS uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
+Once you've set up your instance, using the delta.storage SDK is easy.
 
-### TypeScript
+- General
 
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
+  - [getTotalSize](#getTotalSize-anchor)
 
-## Continuous Integration
+- Directory Management
 
-### GitHub Actions
+  - [readDirectory](#readDirectory-anchor)
+  - [readDirectoryBySegment](#readDirectoryBySegment-anchor)
+  - [createDirectory](#createDirectory-anchor)
+  - [renameDirectory](#renameDirectory-anchor)
+  - [move](#move-anchor)
+  - [deleteDirectory](#deleteDirectory-anchor)
 
-Two actions are added by default:
+- File Management
 
-- `main` which installs deps w/ cache, lints, tests, and builds on all pushes against a Node and OS matrix
-- `size` which comments cost comparison of your library on every pull request using [`size-limit`](https://github.com/ai/size-limit)
+  - [readFile](#readFile-anchor)
+  - [uploadFile](#uploadFile-anchor)
+  - [deleteFile](#deleteFile-anchor)
 
-## Optimizations
+<br />
 
-Please see the main `dts` [optimizations docs](https://github.com/weiran-zsd/dts-cli#optimizations). In particular, know that you can take advantage of development-only optimizations:
+<a name="#getTotalSize-anchor"></a>
 
-```js
-// ./types/index.d.ts
-declare var __DEV__: boolean;
+### `getTotalSize`
 
-// inside your code...
-if (__DEV__) {
-  console.log('foo');
-}
+Returns the total size of files uploaded to hot.delta.storage.
+
+```typescript
+const totalSize: bigint = await sdk.getTotalSize()
 ```
 
-You can also choose to install and use [invariant](https://github.com/weiran-zsd/dts-cli#invariant) and [warning](https://github.com/weiran-zsd/dts-cli#warning) functions.
+<a name="#readDirectory-anchor"></a>
 
-## Module Formats
+### `readDirectory`
 
-CJS, ESModules, and UMD module formats are supported.
+Returns the `Files` and `Directories` contained in the given directory.
 
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
+<a name="#readDirectoryBySegment-anchor"></a>
 
-## Named Exports
+### `readDirectoryBySegment`
 
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
+Returns the `Files` and `Directories` contained in the given directory by segment.
 
-## Including Styles
+<a name="#createDirectory-anchor"></a>
 
-There are many ways to ship styles, including with CSS-in-JS. DTS has no opinion on this, configure how you like.
+### `createDirectory`
 
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
+Create a new directory.
 
-## Publishing to NPM
+<a name="#renameDirectory-anchor"></a>
 
-We recommend using [np](https://github.com/sindresorhus/np).
+### `renameDirectory`
+
+Rename a directory.
+
+<a name="#move-anchor"></a>
+
+### `move`
+
+Move all `Files` and `Directories` to the given `Directory` ID.
+
+<a name="#deleteDirectory-anchor"></a>
+
+### `deleteDirectory`
+
+Delete a directory and its contents.
+
+<a name="#readFile-anchor"></a>
+
+### `readFile`
+
+Read the file and its metadata.
+
+<a name="#uploadFile-anchor"></a>
+
+### `uploadFile`
+
+Upload a new file.
+
+<a name="#deleteFile-anchor"></a>
+
+### `deleteFile`
+
+Delete a file.
