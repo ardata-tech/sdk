@@ -58,3 +58,8 @@ test('should be able to soft delete a directory', async () => {
   const result = await sdk.deleteDirectory(directoryId)
   expect(result.data.success).toBeTruthy()
 })
+
+test('should be able to get the total size', async () => {
+  const totalSize = await sdk.getTotalSize()
+  expect(totalSize).toBeInstanceOf(BigInt)
+})
