@@ -1,8 +1,8 @@
 {
   "extends": "@tsconfig/recommended/tsconfig.json",
   "compilerOptions": {
-    "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "target": "es2020",
+    "lib": ["dom", "dom.iterable", "es2020", "esnext"],
     "moduleResolution": "node",
     "module": "esnext",
     "preserveSymlinks": true

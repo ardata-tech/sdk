@@ -29,6 +29,11 @@ class DeltaStorageSDK {
   public readonly edgeToken: string
   public readonly listener: Socket
 
+  private _totalSize = 0n
+  get totalSize() {
+    return this._totalSize
+  }
+
   constructor(config: DeltaStorageConfig) {
     const [_apiKeyId, scope, _userId, _hash, _edgeToken] =
       config.apiKey.split('.')
@@ -41,6 +46,10 @@ class DeltaStorageSDK {
       auth: {
         token: config.apiKey
       }
+    })
+
+    this.listener.on('directory:change', async () => {
+      this._totalSize = await this.getTotalSize()
     })
   }
 
@@ -226,6 +235,16 @@ class DeltaStorageSDK {
   }
   disconnect() {
     this.listener.disconnect()
+  }
+
+  async getTotalSize(): Promise<bigint> {
+    const result = await axios.get(`${this.host}/total_size`, {
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
+      }
+    })
+
+    return BigInt(result.data.totalSize)
   }
 }
 export default DeltaStorageSDK
