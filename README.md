@@ -30,26 +30,26 @@ Once you've set up your instance, using the delta.storage SDK is easy.
 
 - General
 
-  - [getTotalSize](#getTotalSize-anchor)
+  - [getTotalSize](#getTotalSize)
 
 - Directory Management
 
-  - [readDirectory](#readDirectory-anchor)
-  - [readDirectoryBySegment](#readDirectoryBySegment-anchor)
-  - [createDirectory](#createDirectory-anchor)
-  - [renameDirectory](#renameDirectory-anchor)
-  - [move](#move-anchor)
-  - [deleteDirectory](#deleteDirectory-anchor)
+  - [readDirectory](#readDirectory)
+  - [readDirectoryBySegment](#readDirectoryBySegment)
+  - [createDirectory](#createDirectory)
+  - [renameDirectory](#renameDirectory)
+  - [move](#move)
+  - [deleteDirectory](#deleteDirectory)
 
 - File Management
 
-  - [readFile](#readFile-anchor)
-  - [uploadFile](#uploadFile-anchor)
-  - [deleteFile](#deleteFile-anchor)
+  - [readFile](#readFile)
+  - [uploadFile](#uploadFile)
+  - [deleteFile](#deleteFile)
 
 <br />
 
-<a name="#getTotalSize-anchor"></a>
+<a name="#getTotalSize"></a>
 ### `getTotalSize`
 
 Returns the total size of files uploaded to hot.delta.storage.
@@ -58,47 +58,47 @@ Returns the total size of files uploaded to hot.delta.storage.
 const totalSize: bigint = await sdk.getTotalSize()
 ```
 
-<a name="#readDirectory-anchor"></a>
+<a name="#readDirectory"></a>
 ### `readDirectory`
 
 Returns the `Files` and `Directories` contained in the given directory.
 
-<a name="#readDirectoryBySegment-anchor"></a>
+<a name="#readDirectoryBySegment"></a>
 ### `readDirectoryBySegment`
 
 Returns the `Files` and `Directories` contained in the given directory by segment.
 
-<a name="#createDirectory-anchor"></a>
+<a name="#createDirectory"></a>
 ### `createDirectory`
 
 Create a new directory.
 
-<a name="#renameDirectory-anchor"></a>
+<a name="#renameDirectory"></a>
 ### `renameDirectory`
 
 Rename a directory.
 
-<a name="#move-anchor"></a>
+<a name="#move"></a>
 ### `move`
 
 Move all `Files` and `Directories` to the given `Directory` ID.
 
-<a name="#deleteDirectory-anchor"></a>
+<a name="#deleteDirectory"></a>
 ### `deleteDirectory`
 
 Delete a directory and its contents.
 
-<a name="#readFile-anchor"></a>
+<a name="#readFile"></a>
 ### `readFile`
 
 Read the file and its metadata.
 
-<a name="#uploadFile-anchor"></a>
+<a name="#uploadFile"></a>
 ### `uploadFile`
 
 Upload a new file.
 
-<a name="#deleteFile-anchor"></a>
+<a name="#deleteFile"></a>
 ### `deleteFile`
 
 Delete a file.
