@@ -142,6 +142,8 @@ try {
 **Required API Key Permission**
 - Delete File
 
+## Directory Management
+
 <a name="#readDirectory"></a>
 ### `readDirectory`
 
@@ -272,6 +274,8 @@ try {
 
 **Required API Key Permission**
 - Delete Directory
+
+## General
 
 <a name="#move"></a>
 ### `move`
