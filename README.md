@@ -46,7 +46,7 @@ Once you've set up your instance, using the Delta Storage SDK is easy as follows
     - [move](#move)
     - [getTotalSize](#getTotalSize)
 
-<a name="#readFile"/>
+<a name="#readFile"></a>
 ### `readFile`
 
 You can use the readFile method to retrieve the contents of a file by its ID.
@@ -67,7 +67,7 @@ try {
 **Required API Key Permission**
 - Read File
 
-<a name="#uploadFile"/>
+<a name="#uploadFile"></a>
 ### `uploadFile`
 
 This method allows you to upload a file to Delta Storage.
@@ -95,7 +95,7 @@ try {
 **Required API Key Permission**
 - Upload File
 
-<a name="#renameFile"/>
+<a name="#renameFile"></a>
 ### `renameFile`
 
 Rename an existing file by providing its ID and the new name.
@@ -119,7 +119,7 @@ try {
 - Upload File
 - Delete File
 
-<a name="#deleteFile"/>
+<a name="#deleteFile"></a>
 ### `deleteFile`
 
 Delete a file by its ID using the deleteFile method.
@@ -140,7 +140,7 @@ try {
 **Required API Key Permission**
 - Delete File
 
-<a name="#readDirectory"/>
+<a name="#readDirectory"></a>
 ### `readDirectory`
 
 Retrieve the contents of a directory by its ID. This method is useful when you want to list the directories and files within a specific directory.
@@ -171,7 +171,7 @@ try {
 **Required API Key Permission**
 - Read Directory
 
-<a name="#readDirectoryBySegment"/>
+<a name="#readDirectoryBySegment"></a>
 ### `readDirectoryBySegment`
 
 Retrieve the contents of a directory by specifying a path using segments. This method is useful when you want to navigate through directories based on a custom path.
@@ -202,7 +202,7 @@ try {
 **Required API Key Permission**
 - Read Directory
 
-<a name="#createDirectory"/>
+<a name="#createDirectory"></a>
 ### `createDirectory`
 
 Create a new directory with a specified name and, optionally, within a parent directory.
@@ -226,7 +226,7 @@ try {
 **Required API Key Permission**
 - Create Directory
 
-<a name="#renameDirectory"/>
+<a name="#renameDirectory"></a>
 ### `renameDirectory`
 
 Rename an existing directory by providing its ID and the new name.
@@ -250,7 +250,7 @@ try {
 - Create Directory
 - Delete Directory
 
-<a name="#deleteDirectory"/>
+<a name="#deleteDirectory"></a>
 ### `deleteDirectory`
 
 Delete a directory and its contents.
@@ -271,7 +271,7 @@ try {
 **Required API Key Permission**
 - Delete Directory
 
-<a name="#move"/>
+<a name="#move"></a>
 ### `move`
 
 Move one or more child directories or files to a new parent directory.
@@ -298,7 +298,7 @@ try {
 - Create Directory
 - Delete Directory
 
-<a name="#getTotalSize"/>
+<a name="#getTotalSize"></a>
 ### `getTotalSize`
 
 Returns the total size of files uploaded to [hot.delta.storage](https://hot.delta.storage/).
