@@ -29,11 +29,6 @@ class DeltaStorageSDK {
   public readonly edgeToken: string
   public readonly listener: Socket
 
-  private _totalSize = 0n
-  get totalSize() {
-    return this._totalSize
-  }
-
   constructor(config: DeltaStorageConfig) {
     const [_apiKeyId, scope, _userId, _hash, _edgeToken] =
       config.apiKey.split('.')
@@ -46,10 +41,6 @@ class DeltaStorageSDK {
       auth: {
         token: config.apiKey
       }
-    })
-
-    this.listener.on('directory:change', async () => {
-      this._totalSize = await this.getTotalSize()
     })
   }
 
@@ -234,7 +225,7 @@ class DeltaStorageSDK {
     id: string,
     onChange: (directory: { directories: Directories[]; files: any[] }) => void
   ) {
-    this.listener.emit('directory:initialize', id)
+    this.listener.emit('directory:initialize')
     this.listener.on('directory:change', async () => {
       const latestDirectory = (await this.readDirectory(id)).data
       onChange(latestDirectory)
@@ -255,13 +246,30 @@ class DeltaStorageSDK {
   }
 
   async getTotalSize(): Promise<bigint> {
-    const result = await axios.get(`${this.host}/total_size`, {
+    const result = await axios.get(`${this.host}/api/total-size`, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
       }
     })
 
-    return BigInt(result.data.totalSize)
+    return result.data.totalSize
+  }
+
+  async onTotalSizeChange(callback: (data: any) => void) {
+    this.listener.on('directory:change', async () => {
+      const totalSize = await this.getTotalSize()
+      callback(totalSize)
+    })
+  }
+
+  async readDirectorySize(id: string): Promise<bigint> {
+    const result = await axios.get(`${this.host}/api/directory/${id}/size`, {
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
+      }
+    })
+
+    return result.data.totalSize
   }
 }
 export default DeltaStorageSDK
