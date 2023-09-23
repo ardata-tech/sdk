@@ -7,6 +7,7 @@ Official SDK for [Delta Storage](https://delta.storage/)
 The Delta Storage SDK is a JavaScript library that provides asbtraction for interacting with the [Delta Storage API](https://docs.delta.storage/). This SDK allows you to perform various operations such as reading files, uploading files, managing directories, and more.
 
 ## Installation
+
 You can install the Delta Storage SDK using your preferred package manager:
 ```
 npm install --save @delta-storage/sdk
@@ -16,6 +17,7 @@ yarn add --save @delta-storage/sdk
 ```
 
 ## Getting Started
+
 To start using the Delta Storage SDK, you need to acquire your API_KEY from your [hot.delta.storage](https://hot.delta.storage/). Once you have your API_KEY, Here's how you can get started:
 
 ```typescript
@@ -27,6 +29,7 @@ const deltaStorage = new DeltaStorageSDK({
 ```
 
 ## Usage
+
 Once you've set up your instance, using the Delta Storage SDK is easy as follows:
 - File Management
   - [readFile](#readFile)
@@ -45,6 +48,7 @@ Once you've set up your instance, using the Delta Storage SDK is easy as follows
 
 <a name="#readFile"/>
 ### `readFile`
+
 You can use the readFile method to retrieve the contents of a file by its ID.
 
 ```
@@ -65,6 +69,7 @@ try {
 
 <a name="#uploadFile"/>
 ### `uploadFile`
+
 This method allows you to upload a file to Delta Storage.
 
 ```
@@ -92,6 +97,7 @@ try {
 
 <a name="#renameFile"/>
 ### `renameFile`
+
 Rename an existing file by providing its ID and the new name.
 
 ```
@@ -115,6 +121,7 @@ try {
 
 <a name="#deleteFile"/>
 ### `deleteFile`
+
 Delete a file by its ID using the deleteFile method.
 
 ```
@@ -135,6 +142,7 @@ try {
 
 <a name="#readDirectory"/>
 ### `readDirectory`
+
 Retrieve the contents of a directory by its ID. This method is useful when you want to list the directories and files within a specific directory.
 
 ```
@@ -165,6 +173,7 @@ try {
 
 <a name="#readDirectoryBySegment"/>
 ### `readDirectoryBySegment`
+
 Retrieve the contents of a directory by specifying a path using segments. This method is useful when you want to navigate through directories based on a custom path.
 
 ```
@@ -195,6 +204,7 @@ try {
 
 <a name="#createDirectory"/>
 ### `createDirectory`
+
 Create a new directory with a specified name and, optionally, within a parent directory.
 
 ```
@@ -218,6 +228,7 @@ try {
 
 <a name="#renameDirectory"/>
 ### `renameDirectory`
+
 Rename an existing directory by providing its ID and the new name.
 
 ```
@@ -241,6 +252,7 @@ try {
 
 <a name="#deleteDirectory"/>
 ### `deleteDirectory`
+
 Delete a directory and its contents.
 
 ```
@@ -261,6 +273,7 @@ try {
 
 <a name="#move"/>
 ### `move`
+
 Move one or more child directories or files to a new parent directory.
 
 ```
@@ -287,6 +300,7 @@ try {
 
 <a name="#getTotalSize"/>
 ### `getTotalSize`
+
 Returns the total size of files uploaded to [hot.delta.storage](https://hot.delta.storage/).
 
 ```
