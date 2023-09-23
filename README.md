@@ -18,7 +18,7 @@ yarn add --save @delta-storage/sdk
 
 ## Getting Started
 
-To start using the Delta Storage SDK, you need to acquire your API_KEY from your [hot.delta.storage](https://hot.delta.storage/). Once you have your API_KEY, Here's how you can get started:
+To start using the Delta Storage SDK, you need to acquire your API_KEY from your [hot.delta.storage](https://hot.delta.storage/) account. Once you have your API_KEY, Here's how you can get started:
 
 ```typescript
 import DeltaStorageSDK from '@delta-storage/sdk'
@@ -45,6 +45,8 @@ Once you've set up your instance, using the Delta Storage SDK is easy as follows
  - General
     - [move](#move)
     - [getTotalSize](#getTotalSize)
+  
+## File Management
 
 <a name="#readFile"></a>
 ### `readFile`
