@@ -250,7 +250,7 @@ try {
 - directoryId (string): The ID of the directory you want to rename.
 - newName (string): The new name for the directory.
 
-**Required API Key Permission**
+**Required API Key Permissions**
 - Create Directory
 - Delete Directory
 
@@ -300,9 +300,23 @@ try {
 - childDirectoryIds (string[]): An array of child directory IDs to move.
 - childFileIds (string[], optional): An array of child file IDs to move (if applicable).
 
-**Required API Key Permission**
+**Required API Key Permissions**
 - Create Directory
 - Delete Directory
+
+<a name="#totalSize"></a>
+### `totalSize`
+
+Returns the real-time total size of files uploaded to [hot.delta.storage](https://hot.delta.storage/).
+
+```typescript
+try {
+  const realTimeTotalSize = await deltaStorage.totalSize();
+  console.log(`Real-time total size: ${realTimeTotalSize} bytes`);
+} catch (error) {
+  console.error(error.message);
+}
+```
 
 <a name="#getTotalSize"></a>
 ### `getTotalSize`
