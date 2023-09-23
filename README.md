@@ -46,6 +46,7 @@ Once you've set up your instance, using the Delta Storage SDK is easy as follows
 <a name="#readFile"/>
 ### `readFile`
 You can use the readFile method to retrieve the contents of a file by its ID.
+
 ```
 try {
   const fileId = 'file_id_here'; //The id of the file you want to read.
@@ -55,6 +56,7 @@ try {
   console.error(error.message);
 }
 ```
+
 **Params**
 - fileId (string, optional): The ID of the file you want to retrieve. If not provided, it retrieves all your files.
 
@@ -64,6 +66,7 @@ try {
 <a name="#uploadFile"/>
 ### `uploadFile`
 This method allows you to upload a file to Delta Storage.
+
 ```
 try {
   const name = 'example.txt';
@@ -77,6 +80,7 @@ try {
   console.error(error.message);
 }
 ```
+
 **Params**
 - name (string): The name of the file.
 - file (form data): The file to upload.
@@ -89,6 +93,7 @@ try {
 <a name="#renameFile"/>
 ### `renameFile`
 Rename an existing file by providing its ID and the new name.
+
 ```
 try {
   const fileId = 'file_id_here'; // Replace with the file ID you want to rename
@@ -99,6 +104,7 @@ try {
   console.error(error.message);
 }
 ```
+
 **Params**
 - fileId (string): The ID of the file you want to rename.
 - newName (string): The new name for the file.
@@ -110,6 +116,7 @@ try {
 <a name="#deleteFile"/>
 ### `deleteFile`
 Delete a file by its ID using the deleteFile method.
+
 ```
 try {
   const fileId = 'file_id_here';
@@ -119,6 +126,7 @@ try {
   console.error(error.message);
 }
 ```
+
 **Params**
 - fileId (string): The ID of the file to delete.
 
@@ -128,6 +136,7 @@ try {
 <a name="#readDirectory"/>
 ### `readDirectory`
 Retrieve the contents of a directory by its ID. This method is useful when you want to list the directories and files within a specific directory.
+
 ```
 try {
   const directoryId = 'directory_id_here'; // Replace with the desired directory ID
@@ -147,6 +156,7 @@ try {
   console.error(error.message);
 }
 ```
+
 **Params**
 - directoryId (string, optional): The ID of the directory you want to retrieve. If not provided, it retrieves the root directory.
 
@@ -156,6 +166,7 @@ try {
 <a name="#readDirectoryBySegment"/>
 ### `readDirectoryBySegment`
 Retrieve the contents of a directory by specifying a path using segments. This method is useful when you want to navigate through directories based on a custom path.
+
 ```
 try {
   const segments = 'folder1/subfolder1/subfolder2'; // Replace with your desired path
@@ -175,6 +186,7 @@ try {
   console.error(error.message);
 }
 ```
+
 **Params**
 - segments (string): A custom path to the directory, where segments are separated by slashes ('/'). Specify the path to the directory you want to retrieve.
 
@@ -184,6 +196,7 @@ try {
 <a name="#createDirectory"/>
 ### `createDirectory`
 Create a new directory with a specified name and, optionally, within a parent directory.
+
 ```
 try {
   const directoryName = 'new_directory'; // Replace with the desired directory name
@@ -195,6 +208,7 @@ try {
   console.error(error.message);
 }
 ```
+
 **Params**
 - directoryName (string): The name of the new directory.
 - parentDirectoryId (string, optional): The ID of the parent directory where the new directory will be created. If not provided, the directory will be created at the root level.
@@ -205,6 +219,7 @@ try {
 <a name="#renameDirectory"/>
 ### `renameDirectory`
 Rename an existing directory by providing its ID and the new name.
+
 ```
 try {
   const directoryId = 'directory_id_here'; // Replace with the directory ID you want to rename
@@ -215,6 +230,7 @@ try {
   console.error(error.message);
 }
 ```
+
 **Params**
 - directoryId (string): The ID of the directory you want to rename.
 - newName (string): The new name for the directory.
@@ -226,6 +242,7 @@ try {
 <a name="#deleteDirectory"/>
 ### `deleteDirectory`
 Delete a directory and its contents.
+
 ```
 try {
   const directoryId = 'directory_id_here'; // Replace with the directory ID you want to delete
@@ -235,6 +252,7 @@ try {
   console.error(error.message);
 }
 ```
+
 **Params**
 - directoryId (string): The ID of the directory to delete.
 
@@ -244,6 +262,7 @@ try {
 <a name="#move"/>
 ### `move`
 Move one or more child directories or files to a new parent directory.
+
 ```
 try {
   const newParentId = 'new_parent_directory_id'; // Replace with the ID of the new parent directory
@@ -256,6 +275,7 @@ try {
   console.error(error.message);
 }
 ```
+
 **Params**
 - newParentId (string): The ID of the new parent directory where the child directories/files will be moved.
 - childDirectoryIds (string[]): An array of child directory IDs to move.
@@ -268,6 +288,7 @@ try {
 <a name="#getTotalSize"/>
 ### `getTotalSize`
 Returns the total size of files uploaded to [hot.delta.storage](https://hot.delta.storage/).
+
 ```
 try {
   const totalSize = await deltaStorage.getTotalSize();
@@ -282,4 +303,4 @@ Problem: Unauthorized error when performing an operation.
 Solution: Ensure that your API key has the necessary permissions for the operation you're trying to perform.
 
 ## License
-[MIT](https://github.com/delta-storage/sdk/blob/main/LICENSE)
+MIT
