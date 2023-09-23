@@ -51,7 +51,7 @@ Once you've set up your instance, using the Delta Storage SDK is easy as follows
 
 You can use the readFile method to retrieve the contents of a file by its ID.
 
-```
+```typescript
 try {
   const fileId = 'file_id_here'; //The id of the file you want to read.
   const response = await deltaStorage.readFile(fileId);
@@ -72,7 +72,7 @@ try {
 
 This method allows you to upload a file to Delta Storage.
 
-```
+```typescript
 try {
   const name = 'example.txt';
   const file = /* Your file input or Blob */;
@@ -100,7 +100,7 @@ try {
 
 Rename an existing file by providing its ID and the new name.
 
-```
+```typescript
 try {
   const fileId = 'file_id_here'; // Replace with the file ID you want to rename
   const newName = 'new_file_name.txt'; // Replace with the new file name
@@ -124,7 +124,7 @@ try {
 
 Delete a file by its ID using the deleteFile method.
 
-```
+```typescript
 try {
   const fileId = 'file_id_here';
   const response = await deltaStorage.deleteFile(fileId);
@@ -145,7 +145,7 @@ try {
 
 Retrieve the contents of a directory by its ID. This method is useful when you want to list the directories and files within a specific directory.
 
-```
+```typescript
 try {
   const directoryId = 'directory_id_here'; // Replace with the desired directory ID
   const response = await deltaStorage.readDirectory(directoryId);
@@ -176,7 +176,7 @@ try {
 
 Retrieve the contents of a directory by specifying a path using segments. This method is useful when you want to navigate through directories based on a custom path.
 
-```
+```typescript
 try {
   const segments = 'folder1/subfolder1/subfolder2'; // Replace with your desired path
   const response = await deltaStorage.readDirectoryBySegment(segments);
@@ -207,7 +207,7 @@ try {
 
 Create a new directory with a specified name and, optionally, within a parent directory.
 
-```
+```typescript
 try {
   const directoryName = 'new_directory'; // Replace with the desired directory name
   const parentDirectoryId = 'parent_directory_id'; // Optional: Provide the parent directory ID if creating a nested directory
@@ -231,7 +231,7 @@ try {
 
 Rename an existing directory by providing its ID and the new name.
 
-```
+```typescript
 try {
   const directoryId = 'directory_id_here'; // Replace with the directory ID you want to rename
   const newName = 'new_directory_name'; // Replace with the new directory name
@@ -255,7 +255,7 @@ try {
 
 Delete a directory and its contents.
 
-```
+```typescript
 try {
   const directoryId = 'directory_id_here'; // Replace with the directory ID you want to delete
   const response = await deltaStorage.deleteDirectory(directoryId);
@@ -276,7 +276,7 @@ try {
 
 Move one or more child directories or files to a new parent directory.
 
-```
+```typescript
 try {
   const newParentId = 'new_parent_directory_id'; // Replace with the ID of the new parent directory
   const childDirectoryIds = ['child_dir_id1', 'child_dir_id2']; // Replace with the IDs of child directories to move
@@ -303,7 +303,7 @@ try {
 
 Returns the total size of files uploaded to [hot.delta.storage](https://hot.delta.storage/).
 
-```
+```typescript
 try {
   const totalSize = await deltaStorage.getTotalSize();
   console.log(`Total size: ${totalSize} bytes`);
@@ -313,8 +313,8 @@ try {
 ```
 
 ## Troubleshooting
-Problem: Unauthorized error when performing an operation.
+Problem: Unauthorized error when performing an operation. <br/>
 Solution: Ensure that your API key has the necessary permissions for the operation you're trying to perform.
 
 ## License
-MIT
+[MIT](https://github.com/delta-storage/sdk/blob/main/LICENSE)
