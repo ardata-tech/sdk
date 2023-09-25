@@ -25,12 +25,10 @@ class DeltaStorageSDK {
   public readonly apiKey: string
   public readonly scope: number
   public readonly host: string
-  public readonly edgeToken: string
   public readonly listener: Socket
 
   constructor(config: DeltaStorageConfig) {
-    const [_apiKeyId, scope, _userId, _hash, _edgeToken] =
-      config.apiKey.split('.')
+    const [_apiKeyId, scope, _userId, _hash] = config.apiKey.split('.')
     this.apiKey = config.apiKey
     this.scope = parseInt(scope)
 
@@ -40,7 +38,6 @@ class DeltaStorageSDK {
       this.host = 'https://api.delta.storage'
     }
     this.host = this.host.slice(-1) === '/' ? this.host.slice(0, -1) : this.host
-    this.edgeToken = _edgeToken
     this.listener = io(this.host, {
       auth: {
         token: config.apiKey
@@ -79,9 +76,7 @@ class DeltaStorageSDK {
     formData.append('file', file)
     formData.append('collectionName', collectionName)
     formData.append('directoryId', directoryId)
-    formData.append('edgeToken', this.edgeToken)
 
-    //TODO modify edgeToken to be included in apiKey
     return axios.post(`${this.host}/api/files/upload`, formData, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
