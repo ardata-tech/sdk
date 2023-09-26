@@ -52,7 +52,7 @@ class DeltaStorageSDK {
       OPERATION_SCOPE.READ_FILE,
       'READ_FILE is not allowed.'
     )
-    return axios.get(`${this.host}/api/files/${id ?? ''}`, {
+    return axios.get(`${this.host}/files/${id ?? ''}`, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
       }
@@ -77,7 +77,7 @@ class DeltaStorageSDK {
     formData.append('collectionName', collectionName)
     formData.append('directoryId', directoryId)
 
-    return axios.post(`${this.host}/api/files/upload`, formData, {
+    return axios.post(`${this.host}/files/upload`, formData, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
       }
@@ -90,7 +90,7 @@ class DeltaStorageSDK {
       OPERATION_SCOPE.DELETE_FILE,
       'DELETE_FILE is not allowed.'
     )
-    return axios.delete(`${this.host}/api/files/${id}`, {
+    return axios.delete(`${this.host}/files/${id}`, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
       }
@@ -104,7 +104,7 @@ class DeltaStorageSDK {
       'RENAME_FILE is not allowed.'
     )
     return axios.put(
-      `${this.host}/api/files/${id}`,
+      `${this.host}/files/${id}`,
       { name },
       {
         headers: {
@@ -126,7 +126,7 @@ class DeltaStorageSDK {
       'READ_DIRECTORY is not allowed.'
     )
 
-    return axios.get(`${this.host}/api/directory/${id ?? ''}`, {
+    return axios.get(`${this.host}/directory/${id ?? ''}`, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
       }
@@ -142,7 +142,7 @@ class DeltaStorageSDK {
 
     const query = segments.split('/').join('&segment=')
 
-    return axios.get(`${this.host}/api/directory?segment=${query}`, {
+    return axios.get(`${this.host}/directory?segment=${query}`, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
       }
@@ -157,7 +157,7 @@ class DeltaStorageSDK {
     )
 
     return axios.post(
-      `${this.host}/api/directory/create`,
+      `${this.host}/directory/create`,
       { name, parentDirectoryId },
       {
         headers: {
@@ -175,7 +175,7 @@ class DeltaStorageSDK {
     )
 
     return axios.put(
-      `${this.host}/api/directory/${id}`,
+      `${this.host}/directory/${id}`,
       { name },
       {
         headers: {
@@ -197,7 +197,7 @@ class DeltaStorageSDK {
     )
 
     return axios.put(
-      `${this.host}/api/directory/${parentId}`,
+      `${this.host}/directory/${parentId}`,
       { move: childrenIds, moveFiles: childrenFileIds },
       {
         headers: {
@@ -214,7 +214,7 @@ class DeltaStorageSDK {
       'DELETE_DIRECTORY is not allowed.'
     )
 
-    return axios.delete(`${this.host}/api/directory/${id}`, {
+    return axios.delete(`${this.host}/directory/${id}`, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
       }
@@ -222,7 +222,7 @@ class DeltaStorageSDK {
   }
 
   async getTotalSize(): Promise<bigint> {
-    const result = await axios.get(`${this.host}/api/total-size`, {
+    const result = await axios.get(`${this.host}/total-size`, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
       }
@@ -232,7 +232,7 @@ class DeltaStorageSDK {
   }
 
   async readDirectorySize(id: string): Promise<bigint> {
-    const result = await axios.get(`${this.host}/api/directory/${id}/size`, {
+    const result = await axios.get(`${this.host}/directory/${id}/size`, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
       }
