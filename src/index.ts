@@ -31,12 +31,7 @@ class DeltaStorageSDK {
     const [_apiKeyId, scope, _userId, _hash] = config.apiKey.split('.')
     this.apiKey = config.apiKey
     this.scope = parseInt(scope)
-
-    if (process.env.NODE_ENV === 'development') {
-      this.host = 'http://localhost:1337'
-    } else {
-      this.host = 'https://api.delta.storage'
-    }
+    this.host = 'https://api.delta.storage'
     this.host = this.host.slice(-1) === '/' ? this.host.slice(0, -1) : this.host
     this.listener = io(this.host, {
       auth: {
