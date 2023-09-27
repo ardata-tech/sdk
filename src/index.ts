@@ -253,7 +253,8 @@ class DeltaStorageSDK {
   }
 
   async onTotalSizeChange(callback: (data: any) => void) {
-    this.onDirectoryChange(async () => {
+    this.listener.emit('total-size:initialize')
+    this.listener.on('total-size:change', async () => {
       const totalSize = await this.getTotalSize()
       callback(totalSize)
     })
