@@ -26,12 +26,13 @@ class DeltaStorageSDK {
   public readonly scope: number
   public readonly host: string
   public readonly listener: Socket
+  private cache: Map<string, { directories: Directories[]; files: any[] }>
 
   constructor(config: DeltaStorageConfig) {
     const [_apiKeyId, scope, _userId, _hash] = config.apiKey.split('.')
     this.apiKey = config.apiKey
     this.scope = parseInt(scope)
-    this.host = 'https://api.delta.storage'
+    this.host = 'http://localhost:1337'
     this.host = this.host.slice(-1) === '/' ? this.host.slice(0, -1) : this.host
     this.listener = io(this.host, {
       auth: {
@@ -39,6 +40,7 @@ class DeltaStorageSDK {
       },
       autoConnect: false
     })
+    this.cache = new Map()
   }
 
   async readFile(id?: string) {
@@ -72,6 +74,8 @@ class DeltaStorageSDK {
     formData.append('collectionName', collectionName)
     formData.append('directoryId', directoryId)
 
+    this.cache.delete(directoryId)
+
     return axios.post(`${this.host}/files/upload`, formData, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
@@ -85,6 +89,9 @@ class DeltaStorageSDK {
       OPERATION_SCOPE.DELETE_FILE,
       'DELETE_FILE is not allowed.'
     )
+
+    this.cache.clear()
+
     return axios.delete(`${this.host}/files/${id}`, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
@@ -98,6 +105,9 @@ class DeltaStorageSDK {
       OPERATION_SCOPE.UPLOAD_FILE | OPERATION_SCOPE.DELETE_FILE,
       'RENAME_FILE is not allowed.'
     )
+
+    this.cache.clear()
+
     return axios.put(
       `${this.host}/files/${id}`,
       { name },
@@ -121,11 +131,22 @@ class DeltaStorageSDK {
       'READ_DIRECTORY is not allowed.'
     )
 
-    return axios.get(`${this.host}/directory/${id ?? ''}`, {
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`
-      }
-    })
+    const cacheKey = id || this.apiKey // Use id if provided, otherwise use this.apiKey
+
+    if (this.cache.has(cacheKey)) {
+      const data = this.cache.get(cacheKey)
+      return { data: data as { directories: Directories[]; files: any[] } }
+    } else {
+      const res = await axios.get(`${this.host}/directory/${id ?? ''}`, {
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`
+        }
+      })
+
+      this.cache.set(cacheKey, res.data)
+
+      return res
+    }
   }
 
   async readDirectoryBySegment(segments: string) {
@@ -151,6 +172,12 @@ class DeltaStorageSDK {
       'CREATE_DIRECTORY is not allowed.'
     )
 
+    if (!parentDirectoryId) {
+      this.cache.delete(this.apiKey)
+    } else {
+      this.cache.delete(parentDirectoryId)
+    }
+
     return axios.post(
       `${this.host}/directory/create`,
       { name, parentDirectoryId },
@@ -168,6 +195,8 @@ class DeltaStorageSDK {
       OPERATION_SCOPE.CREATE_DIRECTORY | OPERATION_SCOPE.DELETE_DIRECTORY,
       'UPDATE_DIRECTORY is not allowed.'
     )
+
+    this.cache.clear()
 
     return axios.put(
       `${this.host}/directory/${id}`,
@@ -191,6 +220,8 @@ class DeltaStorageSDK {
       'UPDATE_DIRECTORY is not allowed.'
     )
 
+    this.cache.clear()
+
     return axios.put(
       `${this.host}/directory/${parentId}`,
       { move: childrenIds, moveFiles: childrenFileIds },
@@ -208,6 +239,8 @@ class DeltaStorageSDK {
       OPERATION_SCOPE.DELETE_DIRECTORY,
       'DELETE_DIRECTORY is not allowed.'
     )
+
+    this.cache.clear()
 
     return axios.delete(`${this.host}/directory/${id}`, {
       headers: {
@@ -265,10 +298,18 @@ class DeltaStorageSDK {
     onChange: (directory: { directories: Directories[]; files: any[] }) => void
   ) {
     this.listener.emit('directory:initialize')
-    this.onDirectoryChange(async () => {
-      const latestDirectory = (await this.readDirectory(id)).data
-      onChange(latestDirectory)
-    })
+    if (this.cache.has(id)) {
+      const data = this.cache.get(id) as {
+        directories: Directories[]
+        files: any[]
+      }
+      onChange(data)
+    } else {
+      this.onDirectoryChange(async () => {
+        const latestDirectory = (await this.readDirectory(id)).data
+        onChange(latestDirectory)
+      })
+    }
   }
 
   async onReadDirectorySegmentChange(
