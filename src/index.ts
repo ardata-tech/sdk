@@ -280,5 +280,22 @@ class DeltaStorageSDK {
       onChange(res.data)
     })
   }
+
+  async setFileStorageClass(
+    id: string,
+    storageClass: 'HOT' | 'WARM' | 'GLACIER'
+  ) {
+    const result = await axios.post(
+      `${this.host}/storage-class/${id}`,
+      { storageClass },
+      {
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`
+        }
+      }
+    )
+
+    return result
+  }
 }
 export default DeltaStorageSDK
