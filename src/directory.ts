@@ -1,16 +1,16 @@
 import { verifyAuthorizedCommand } from './authorization'
 import { OPERATION_SCOPE } from './constants'
 import DeltaStorageSDK from './index'
-import { Directories } from './types'
 import axios from 'axios'
+import { Directory, File } from './types'
 
 export async function readDirectory(
   this: DeltaStorageSDK,
   id?: string
 ): Promise<{
   data: {
-    directories: Directories[]
-    files: any[] // todo
+    directories: Directory[]
+    files: File[] // todo
   }
 }> {
   verifyAuthorizedCommand(

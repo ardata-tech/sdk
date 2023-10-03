@@ -1,5 +1,5 @@
 import DeltaStorageSDK from './index'
-import { Directories } from './types'
+import { Directory, File } from './types'
 
 export function connect(this: DeltaStorageSDK) {
   this.listener.connect()
@@ -33,7 +33,7 @@ export async function onTotalSizeChange(
 export async function onReadDirectoryEvent(
   this: DeltaStorageSDK,
   id: string,
-  onChange: (directory: { directories: Directories[]; files: any[] }) => void
+  onChange: (directory: { directories: Directory[]; files: File[] }) => void
 ) {
   this.listener.emit('directory:initialize')
   this.onDirectoryChange(async () => {
