@@ -83,7 +83,8 @@ export async function updateFile(
   this: DeltaStorageSDK,
   id: string,
   name?: string,
-  storageClasses?: string[]
+  addStorageClasses?: string[],
+  removeStorageClasses?: string[]
 ) {
   verifyAuthorizedCommand(
     this.scope,
@@ -92,7 +93,7 @@ export async function updateFile(
   )
   return await axios.put(
     `${this.host}/files/${id}`,
-    { name, storageClasses },
+    { name, addStorageClasses, removeStorageClasses },
     {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
