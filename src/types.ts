@@ -2,7 +2,7 @@ export interface Directory {
   name: string
   id: string
   itemCount: number
-  storageClass: string
+  storageClassName: string
 }
 
 export interface File {
