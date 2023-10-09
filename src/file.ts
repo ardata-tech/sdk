@@ -45,6 +45,41 @@ export async function uploadFile(
   })
 }
 
+export async function uploadFiles(
+  this: DeltaStorageSDK,
+  files: {
+    name: string
+    file: any
+    collectionName: string
+    directoryId: string
+    storageClasses?: string[]
+  }[]
+) {
+  verifyAuthorizedCommand(
+    this.scope,
+    OPERATION_SCOPE.UPLOAD_FILE,
+    'UPLOAD_FILES is not allowed.'
+  )
+
+  await Promise.all(
+    files.map(async (data) => {
+      const formData = new FormData()
+      formData.append('name', data.name)
+      formData.append('file', data.file)
+      formData.append('collectionName', data.collectionName)
+      formData.append('directoryId', data.directoryId)
+      if (data.storageClasses && data.storageClasses.length > 0)
+        formData.append('storageClasses', JSON.stringify(data.storageClasses))
+
+      return await axios.post(`${this.host}/files/upload`, formData, {
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`
+        }
+      })
+    })
+  )
+}
+
 export async function deleteFile(this: DeltaStorageSDK, id: string) {
   verifyAuthorizedCommand(
     this.scope,
