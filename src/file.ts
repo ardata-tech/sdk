@@ -20,7 +20,6 @@ export async function uploadFile(
   this: DeltaStorageSDK,
   name: string,
   file: any,
-  collectionName: string,
   directoryId: string,
   storageClasses?: string[]
 ) {
@@ -33,7 +32,6 @@ export async function uploadFile(
   const formData = new FormData()
   formData.append('name', name)
   formData.append('file', file)
-  formData.append('collectionName', collectionName)
   formData.append('directoryId', directoryId)
   if (storageClasses && storageClasses.length > 0)
     formData.append('storageClasses', JSON.stringify(storageClasses))
@@ -50,7 +48,6 @@ export async function uploadFiles(
   files: {
     name: string
     file: any
-    collectionName: string
     directoryId: string
     storageClasses?: string[]
   }[]
@@ -66,7 +63,6 @@ export async function uploadFiles(
       const formData = new FormData()
       formData.append('name', data.name)
       formData.append('file', data.file)
-      formData.append('collectionName', data.collectionName)
       formData.append('directoryId', data.directoryId)
       if (data.storageClasses && data.storageClasses.length > 0)
         formData.append('storageClasses', JSON.stringify(data.storageClasses))

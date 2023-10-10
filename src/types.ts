@@ -25,7 +25,7 @@ export interface File {
   size: number
   softDeleted: boolean
   status: string
-  storageId: string
+  cid: string
   updatedAt: Date
   storageClasses: {
     storageClassName: string
