@@ -33,4 +33,5 @@ export interface File {
   pieceId?: string
   network?: string
   onChainId?: string
+  edgeURL: string
 }
