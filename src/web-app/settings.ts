@@ -13,19 +13,17 @@ export async function readSettings(this: DeltaStorageSDK): Promise<any> {
 
 export async function updateSettings(
   this: DeltaStorageSDK,
-  node?: string,
-  encryptionKey?: string,
-  isSecureMode?: boolean
+  body: {
+    node?: string
+    encryptionKey?: string
+    isSecureMode?: boolean
+  }
 ): Promise<any> {
-  const result = await axios.put(
-    `${this.webAppHost}/api/user/settings`,
-    { node, encryptionKey, isSecureMode },
-    {
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`
-      }
+  const result = await axios.put(`${this.webAppHost}/api/user/settings`, body, {
+    headers: {
+      Authorization: `Bearer ${this.apiKey}`
     }
-  )
+  })
 
   return result.data
 }

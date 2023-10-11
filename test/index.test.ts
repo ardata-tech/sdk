@@ -107,7 +107,9 @@ test('should be able to add file access to an email', async () => {
   const data = await sdk.addFileAccess(
     '2849793a-306c-4e1b-9a8c-c81a8d8221be',
     'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe',
-    fileAccessEmail
+    {
+      email: fileAccessEmail
+    }
   )
   expect(data).toHaveProperty('success')
   expect(data.success).toBeTruthy()
@@ -134,7 +136,9 @@ test('should be able to delete file access from an email', async () => {
   const data = await sdk.deleteFileAccess(
     '2849793a-306c-4e1b-9a8c-c81a8d8221be',
     'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe',
-    fileAccessEmail
+    {
+      email: fileAccessEmail
+    }
   )
   expect(data).toHaveProperty('success')
   expect(data.success).toBeTruthy()
@@ -159,7 +163,9 @@ test('should be able to update file access to public', async () => {
   const data = await sdk.updateFileAccess(
     '2849793a-306c-4e1b-9a8c-c81a8d8221be',
     'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe',
-    secureSharingMode
+    {
+      secureSharing: secureSharingMode
+    }
   )
   expect(data).toHaveProperty('success')
   expect(data.success).toBeTruthy()
@@ -177,7 +183,9 @@ test('should be able to update file access to password', async () => {
   const data = await sdk.updateFileAccess(
     '2849793a-306c-4e1b-9a8c-c81a8d8221be',
     'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe',
-    secureSharingMode
+    {
+      secureSharing: secureSharingMode
+    }
   )
   expect(data).toHaveProperty('success')
   expect(data.success).toBeTruthy()
@@ -195,7 +203,9 @@ test('should be able to update file access to restricted', async () => {
   const data = await sdk.updateFileAccess(
     '2849793a-306c-4e1b-9a8c-c81a8d8221be',
     'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe',
-    secureSharingMode
+    {
+      secureSharing: secureSharingMode
+    }
   )
   expect(data).toHaveProperty('success')
   expect(data.success).toBeTruthy()
@@ -213,7 +223,9 @@ test('should verify correct file access password', async () => {
   const data = await sdk.verifyFileAccessPassword(
     '2849793a-306c-4e1b-9a8c-c81a8d8221be',
     'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe',
-    password
+    {
+      password
+    }
   )
   expect(data).toHaveProperty('success')
   expect(data.success).toBeTruthy()
@@ -232,17 +244,16 @@ test('should be able to read settings', async () => {
 
 test('should be able to update settings', async () => {
   const node = 'https://test.vulcaniclabs.com'
-  const data = await sdk.updateSettings(node, undefined, false)
+  const data = await sdk.updateSettings({ node, isSecureMode: false })
   expect(data.success).toBeTruthy()
   const res = await sdk.readSettings()
   const settings = res.settings
   expect(settings.node).toBe(node)
   expect(settings.isSecureMode).toBeFalsy()
-  await sdk.updateSettings(
-    originalSettingsNode,
-    undefined,
-    originalSettingsSecureMode
-  )
+  await sdk.updateSettings({
+    node: originalSettingsNode,
+    isSecureMode: originalSettingsSecureMode
+  })
 })
 
 test('should be able read encryption key', async () => {

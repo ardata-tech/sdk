@@ -29,8 +29,10 @@ export async function addFileAccess(
   this: DeltaStorageSDK,
   fileId: string,
   cid: string,
-  email?: string,
-  password?: string
+  body: {
+    email?: string
+    password?: string
+  }
 ): Promise<any> {
   verifyAuthorizedCommand(
     this.scope,
@@ -39,7 +41,7 @@ export async function addFileAccess(
   )
   const result = await axios.post(
     `${this.webAppHost}/api/file-access/${fileId}/${cid}`,
-    { email, password },
+    body,
     {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
@@ -54,8 +56,10 @@ export async function deleteFileAccess(
   this: DeltaStorageSDK,
   fileId: string,
   cid: string,
-  email: string,
-  deleteAll?: boolean
+  body: {
+    email: string
+    deleteAll?: boolean
+  }
 ): Promise<any> {
   verifyAuthorizedCommand(
     this.scope,
@@ -68,10 +72,7 @@ export async function deleteFileAccess(
       headers: {
         Authorization: `Bearer ${this.apiKey}`
       },
-      data: {
-        email,
-        deleteAll
-      }
+      data: body
     }
   )
 
@@ -82,7 +83,9 @@ export async function updateFileAccess(
   this: DeltaStorageSDK,
   fileId: string,
   cid: string,
-  secureSharing: 'PUBLIC' | 'PASSWORD' | 'RESTRICTED'
+  body: {
+    secureSharing: 'PUBLIC' | 'PASSWORD' | 'RESTRICTED'
+  }
 ): Promise<any> {
   verifyAuthorizedCommand(
     this.scope,
@@ -91,7 +94,7 @@ export async function updateFileAccess(
   )
   const result = await axios.put(
     `${this.webAppHost}/api/file-access/${fileId}/${cid}`,
-    { secureSharing },
+    body,
     {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
@@ -106,7 +109,9 @@ export async function verifyFileAccessPassword(
   this: DeltaStorageSDK,
   fileId: string,
   cid: string,
-  password: string
+  body: {
+    password: string
+  }
 ): Promise<any> {
   verifyAuthorizedCommand(
     this.scope,
@@ -115,7 +120,7 @@ export async function verifyFileAccessPassword(
   )
   const result = await axios.post(
     `${this.webAppHost}/api/file-access/password/${fileId}/${cid}`,
-    { password },
+    body,
     {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
