@@ -1,6 +1,6 @@
-import { verifyAuthorizedCommand } from './authorization'
-import { OPERATION_SCOPE } from './constants'
-import DeltaStorageSDK from './index'
+import { verifyAuthorizedCommand } from '../authorization'
+import { OPERATION_SCOPE } from '../constants'
+import DeltaStorageSDK from '../index'
 import axios from 'axios'
 
 export async function readFile(this: DeltaStorageSDK, id?: string) {

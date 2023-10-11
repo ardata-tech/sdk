@@ -1,5 +1,5 @@
-import DeltaStorageSDK from './index'
-import { Directory, File } from './types'
+import DeltaStorageSDK from '../index'
+import { Directory, File } from '../types'
 
 export function connect(this: DeltaStorageSDK) {
   this.listener.connect()
