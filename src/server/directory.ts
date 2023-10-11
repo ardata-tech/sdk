@@ -1,8 +1,8 @@
-import { verifyAuthorizedCommand } from './authorization'
-import { OPERATION_SCOPE } from './constants'
-import DeltaStorageSDK from './index'
+import { verifyAuthorizedCommand } from '../authorization'
+import { OPERATION_SCOPE } from '../constants'
+import DeltaStorageSDK from '../index'
 import axios from 'axios'
-import { Directory, File } from './types'
+import { Directory, File } from '../types'
 
 export async function readDirectory(
   this: DeltaStorageSDK,
