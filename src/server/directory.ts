@@ -175,3 +175,53 @@ export async function readDirectorySize(
 
   return result.data.totalSize
 }
+
+export async function downloadDirectoryAsZip(
+  this: DeltaStorageSDK,
+  id: string,
+  name: string
+): Promise<{ success: boolean }> {
+  verifyAuthorizedCommand(
+    this.scope,
+    OPERATION_SCOPE.READ_DIRECTORY,
+    'READ_DIRECTORY is not allowed.'
+  )
+  try {
+    const response = await axios.get(`${this.host}/directory/${id}/zip`, {
+      responseType: 'blob',
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
+      }
+    })
+
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${name}-${Date.now()}.zip`
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    return { success: true }
+  } catch (error) {
+    return { success: false }
+  }
+}
+
+export async function getDirectoryAsZip(
+  this: DeltaStorageSDK,
+  id: string,
+  name: string
+): Promise<{ success: boolean }> {
+  verifyAuthorizedCommand(
+    this.scope,
+    OPERATION_SCOPE.READ_DIRECTORY,
+    'READ_DIRECTORY is not allowed.'
+  )
+  const response = await axios.get(`${this.host}/directory/${id}/zip`, {
+    responseType: 'blob',
+    headers: {
+      Authorization: `Bearer ${this.apiKey}`
+    }
+  })
+  return response.data
+}

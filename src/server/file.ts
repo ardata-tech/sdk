@@ -18,7 +18,6 @@ export async function readFile(this: DeltaStorageSDK, id?: string) {
 
 export async function uploadFile(
   this: DeltaStorageSDK,
-  name: string,
   file: any,
   directoryId: string,
   storageClasses?: string[]
@@ -30,7 +29,6 @@ export async function uploadFile(
   )
 
   const formData = new FormData()
-  formData.append('name', name)
   formData.append('file', file)
   formData.append('directoryId', directoryId)
   if (storageClasses && storageClasses.length > 0)
@@ -46,7 +44,6 @@ export async function uploadFile(
 export async function uploadFiles(
   this: DeltaStorageSDK,
   files: {
-    name: string
     file: any
     directoryId: string
     storageClasses?: string[]
@@ -61,7 +58,6 @@ export async function uploadFiles(
   await Promise.all(
     files.map(async (data) => {
       const formData = new FormData()
-      formData.append('name', data.name)
       formData.append('file', data.file)
       formData.append('directoryId', data.directoryId)
       if (data.storageClasses && data.storageClasses.length > 0)
