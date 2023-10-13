@@ -39,6 +39,7 @@ Once you've set up your instance, using the Delta Storage SDK is easy as follows
   - [readDirectory](#readDirectory)
   - [readDirectorySize](#readDirectorySize)
   - [readDirectoryBySegment](#readDirectoryBySegment)
+  - [move](#move)
   - [getDirectoryAsZip](#getDirectoryAsZip)
   - [downloadDirectoryAsZip](#downloadDirectoryAsZip)
   - [renameDirectory](#renameDirectory)
@@ -56,7 +57,6 @@ Once you've set up your instance, using the Delta Storage SDK is easy as follows
   - [updateFileAccess](#updateFileAccess)
   - [deleteFileAccess](#deleteFileAccess)
 - General
-  - [move](#move)
   - [getTotalSize](#getTotalSize) (Storage Used)
   - [readStorage](#readStorage) (Storage Capacity)
   - [readSettings](#readSettings)
@@ -186,6 +186,36 @@ try {
 **Required API Key Permission**
 
 - `Read Directory`
+
+<a name="#move"></a>
+
+### `move`
+
+Use the move method to move files and directories to a new parent directory.
+
+```typescript
+try {
+  const newParentId = 'new_parent_directory_id' // The ID of the new parent directory.
+  const childrenIds = ['child_directory_id_1', 'child_directory_id_2'] // An array of child directory IDs to move.
+  const childrenFileIds = ['child_file_id_1', 'child_file_id_2'] // (optional) An array of child file IDs to move.
+
+  await deltaStorage.move(parentId, childrenIds, childrenFileIds)
+  console.log('Files and directories moved successfully.')
+} catch (error) {
+  console.error(error.message)
+}
+```
+
+**Params**
+
+- `newParentId` (string): The ID of the new parent directory where the child directories/files will be moved.
+- `childDirectoryIds` (string[]): An array of child directory IDs to move.
+- `childFileIds` (string[], optional): An array of child file IDs to move (if applicable).
+
+**Required API Key Permission**
+
+- `Create Directory`
+- `Delete Directory`
 
 <a name="#getDirectoryAsZip"></a>
 
@@ -647,36 +677,6 @@ try {
 - `Upload File`
 
 ## General
-
-<a name="#move"></a>
-
-### `move`
-
-Use the move method to move files and directories to a new parent directory.
-
-```typescript
-try {
-  const newParentId = 'new_parent_directory_id' // The ID of the new parent directory.
-  const childrenIds = ['child_directory_id_1', 'child_directory_id_2'] // An array of child directory IDs to move.
-  const childrenFileIds = ['child_file_id_1', 'child_file_id_2'] // (optional) An array of child file IDs to move.
-
-  await deltaStorage.move(parentId, childrenIds, childrenFileIds)
-  console.log('Files and directories moved successfully.')
-} catch (error) {
-  console.error(error.message)
-}
-```
-
-**Params**
-
-- `newParentId` (string): The ID of the new parent directory where the child directories/files will be moved.
-- `childDirectoryIds` (string[]): An array of child directory IDs to move.
-- `childFileIds` (string[], optional): An array of child file IDs to move (if applicable).
-
-**Required API Key Permission**
-
-- `Create Directory`
-- `Delete Directory`
 
 <a name="#getTotalSize"></a>
 
