@@ -29,8 +29,8 @@ class _DeltaStorageSDK {
     const [_apiKeyId, scope, _userId, _hash] = config.apiKey.split('.')
     this.apiKey = config.apiKey
     this.scope = parseInt(scope)
-    this.host = 'http://api.delta.storage'
-    this.webAppHost = 'http://app.delta.storage'
+    this.host = 'https://api.delta.storage'
+    this.webAppHost = 'https://app.delta.storage'
     this.host = this.host.slice(-1) === '/' ? this.host.slice(0, -1) : this.host
     this.webAppHost =
       this.webAppHost.slice(-1) === '/'
