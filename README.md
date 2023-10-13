@@ -39,9 +39,9 @@ Once you've set up your instance, using the Delta Storage SDK is easy as follows
   - [readDirectory](#readDirectory)
   - [readDirectorySize](#readDirectorySize)
   - [readDirectoryBySegment](#readDirectoryBySegment)
-  - [move](#move)
   - [getDirectoryAsZip](#getDirectoryAsZip)
   - [downloadDirectoryAsZip](#downloadDirectoryAsZip)
+  - [move](#move)
   - [renameDirectory](#renameDirectory)
   - [deleteDirectory](#deleteDirectory)
 - File Management
