@@ -9,6 +9,8 @@ let driveId: string
 let fileAccessEmail = 'test@gmail.com'
 let originalSettingsNode: string
 let originalSettingsSecureMode: boolean
+const fileId = '58b95726-1465-413c-b7ff-939126c657f2'
+const fileCid = 'bafybeierynf7q33vfbvpbotg42mjgfvrqj5ql7efzst6pkvhm7ceeq3ccu'
 
 beforeAll(() => {
   sdk = new DeltaStorageSDK({
@@ -17,16 +19,23 @@ beforeAll(() => {
 })
 
 afterAll(async () => {
-  await sdk.deleteDirectory(driveId)
   await sdk.deleteDirectory(directoryId)
+  await sdk.deleteDrive(driveId)
 })
 
 test('should be able to create a drive', async () => {
-  const drive = await sdk.createDirectory('Drive')
+  const drive = await sdk.createDrive('Drive')
   expect(drive.data.name).toEqual('Drive')
   driveId = drive.data.id
 })
-test('should be able to create a sub-directory', async () => {
+
+test('should be able to view drive contents', async () => {
+  const drive = await sdk.viewDriveContents(driveId)
+  expect(drive.data.directories).toBeInstanceOf(Array)
+  expect(drive.data.files).toBeInstanceOf(Array)
+})
+
+test('should be able to create a directory in a drive', async () => {
   const name = 'Sub-directory'
   const directory = await sdk.createDirectory(name, driveId)
   expect(directory.data.name).toEqual(name)
@@ -48,7 +57,7 @@ test('should be able to read root directory', async () => {
 })
 
 test('should be able to read a specific directory', async () => {
-  const directory = await sdk.readDirectory(driveId)
+  const directory = await sdk.readDirectory(directoryId)
   expect(directory.data.directories).toBeInstanceOf(Array)
   expect(directory.data.files).toBeInstanceOf(Array)
 })
@@ -76,20 +85,26 @@ test('should be able to move to a new directory', async () => {
   )
   await sdk.deleteDirectory(subDirectoryId)
 })
-
-test('should be able to soft delete a directory', async () => {
-  const result = await sdk.deleteDirectory(directoryId)
-  expect(result.data.success).toBeTruthy()
-})
-
 test('should be able to get the total size', async () => {
   const totalSize = await sdk.getTotalSize()
   expect(typeof totalSize).toBe('number')
 })
 
 test('should be able to get the directory size', async () => {
-  const totalSize = await sdk.readDirectorySize(driveId)
+  const totalSize = await sdk.readDirectorySize(directoryId)
   expect(typeof totalSize).toBe('number')
+})
+
+test('should be able to get the drive size', async () => {
+  const drive = await sdk.createDrive('drive delete')
+  const totalSize = await sdk.readDriveSize(driveId)
+  expect(typeof totalSize).toBe('number')
+  sdk.deleteDrive(drive.data.id)
+})
+
+test('should be able to soft delete a directory', async () => {
+  const result = await sdk.deleteDirectory(directoryId)
+  expect(result.data.success).toBeTruthy()
 })
 
 test('should be able to read storage', async () => {
@@ -104,22 +119,15 @@ test('should be able to read storage', async () => {
 })
 
 test('should be able to add file access to an email', async () => {
-  const data = await sdk.addFileAccess(
-    '2849793a-306c-4e1b-9a8c-c81a8d8221be',
-    'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe',
-    {
-      email: fileAccessEmail
-    }
-  )
+  const data = await sdk.addFileAccess(fileId, fileCid, {
+    email: fileAccessEmail
+  })
   expect(data).toHaveProperty('success')
   expect(data.success).toBeTruthy()
 })
 
 test('should be able to read file access', async () => {
-  const data = await sdk.readFileAccess(
-    '2849793a-306c-4e1b-9a8c-c81a8d8221be',
-    'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe'
-  )
+  const data = await sdk.readFileAccess(fileId, fileCid)
   const users = data.users
   expect(users).toEqual(
     expect.arrayContaining([
@@ -133,20 +141,13 @@ test('should be able to read file access', async () => {
   expect(data).toHaveProperty('password')
 })
 test('should be able to delete file access from an email', async () => {
-  const data = await sdk.deleteFileAccess(
-    '2849793a-306c-4e1b-9a8c-c81a8d8221be',
-    'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe',
-    {
-      email: fileAccessEmail
-    }
-  )
+  const data = await sdk.deleteFileAccess(fileId, fileCid, {
+    email: fileAccessEmail
+  })
   expect(data).toHaveProperty('success')
   expect(data.success).toBeTruthy()
 
-  const fileAccess = await sdk.readFileAccess(
-    '2849793a-306c-4e1b-9a8c-c81a8d8221be',
-    'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe'
-  )
+  const fileAccess = await sdk.readFileAccess(fileId, fileCid)
 
   const users = fileAccess.users
   expect(users).toEqual(
@@ -160,73 +161,48 @@ test('should be able to delete file access from an email', async () => {
 
 test('should be able to update file access to public', async () => {
   const secureSharingMode = 'PUBLIC'
-  const data = await sdk.updateFileAccess(
-    '2849793a-306c-4e1b-9a8c-c81a8d8221be',
-    'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe',
-    {
-      secureSharing: secureSharingMode
-    }
-  )
+  const data = await sdk.updateFileAccess(fileId, fileCid, {
+    secureSharing: secureSharingMode
+  })
   expect(data).toHaveProperty('success')
   expect(data.success).toBeTruthy()
 
-  const fileAccess = await sdk.readFileAccess(
-    '2849793a-306c-4e1b-9a8c-c81a8d8221be',
-    'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe'
-  )
+  const fileAccess = await sdk.readFileAccess(fileId, fileCid)
 
   expect(fileAccess.secureSharing).toBe(secureSharingMode)
 })
 
 test('should be able to update file access to password', async () => {
   const secureSharingMode = 'PASSWORD'
-  const data = await sdk.updateFileAccess(
-    '2849793a-306c-4e1b-9a8c-c81a8d8221be',
-    'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe',
-    {
-      secureSharing: secureSharingMode
-    }
-  )
+  const data = await sdk.updateFileAccess(fileId, fileCid, {
+    secureSharing: secureSharingMode
+  })
   expect(data).toHaveProperty('success')
   expect(data.success).toBeTruthy()
 
-  const fileAccess = await sdk.readFileAccess(
-    '2849793a-306c-4e1b-9a8c-c81a8d8221be',
-    'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe'
-  )
+  const fileAccess = await sdk.readFileAccess(fileId, fileCid)
 
   expect(fileAccess.secureSharing).toBe(secureSharingMode)
 })
 
 test('should be able to update file access to restricted', async () => {
   const secureSharingMode = 'RESTRICTED'
-  const data = await sdk.updateFileAccess(
-    '2849793a-306c-4e1b-9a8c-c81a8d8221be',
-    'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe',
-    {
-      secureSharing: secureSharingMode
-    }
-  )
+  const data = await sdk.updateFileAccess(fileId, fileCid, {
+    secureSharing: secureSharingMode
+  })
   expect(data).toHaveProperty('success')
   expect(data.success).toBeTruthy()
 
-  const fileAccess = await sdk.readFileAccess(
-    '2849793a-306c-4e1b-9a8c-c81a8d8221be',
-    'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe'
-  )
+  const fileAccess = await sdk.readFileAccess(fileId, fileCid)
 
   expect(fileAccess.secureSharing).toBe(secureSharingMode)
 })
 
 test('should verify correct file access password', async () => {
   const password = 'qwerty123'
-  const data = await sdk.verifyFileAccessPassword(
-    '2849793a-306c-4e1b-9a8c-c81a8d8221be',
-    'bafybeigzpy72p4nddbl32n2wakuemo2pl3njw5goyhc55amc2igxbbyawe',
-    {
-      password
-    }
-  )
+  const data = await sdk.verifyFileAccessPassword(fileId, fileCid, {
+    password
+  })
   expect(data).toHaveProperty('success')
   expect(data.success).toBeTruthy()
   expect(data.isVerify).toBeTruthy()

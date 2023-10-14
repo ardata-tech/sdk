@@ -149,7 +149,7 @@ export async function getTotalSize(this: DeltaStorageSDK): Promise<bigint> {
     OPERATION_SCOPE.READ_DIRECTORY,
     'READ_DIRECTORY is not allowed.'
   )
-  const result = await axios.get(`${this.host}/total-size`, {
+  const result = await axios.get(`${this.host}/files/total-size`, {
     headers: {
       Authorization: `Bearer ${this.apiKey}`
     }
