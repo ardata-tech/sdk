@@ -35,3 +35,10 @@ export interface File {
   onChainId?: string
   edgeURL: string
 }
+
+export enum DSNProviders {
+  IPFS,
+  SIA,
+  FILECOIN,
+  FILEFILEGO
+}
