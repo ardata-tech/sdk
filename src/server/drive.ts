@@ -12,11 +12,12 @@ export async function listAllDrives(
     OPERATION_SCOPE.READ_DIRECTORY,
     'LIST_ALL_DRIVES is not allowed.'
   )
-  return await axios.get(`${this.host}/drives`, {
+  const res = await axios.get(`${this.host}/drives`, {
     headers: {
       Authorization: `Bearer ${this.apiKey}`
     }
   })
+  return res.data
 }
 
 export async function viewDriveContents(
@@ -33,11 +34,12 @@ export async function viewDriveContents(
     OPERATION_SCOPE.READ_DIRECTORY,
     'VIEW_DRIVE_CONTENTS is not allowed.'
   )
-  return await axios.get(`${this.host}/drives/${id}/contents`, {
+  const res = await axios.get(`${this.host}/drives/${id}/contents`, {
     headers: {
       Authorization: `Bearer ${this.apiKey}`
     }
   })
+  return res.data
 }
 
 export async function createDrive(
@@ -50,7 +52,7 @@ export async function createDrive(
     OPERATION_SCOPE.CREATE_DIRECTORY,
     'CREATE_DRIVE is not allowed.'
   )
-  return await axios.post(
+  const res = await axios.post(
     `${this.host}/drives/create`,
     { name, storageClass },
     {
@@ -59,6 +61,7 @@ export async function createDrive(
       }
     }
   )
+  return res.data
 }
 
 export async function renameDrive(
@@ -71,7 +74,7 @@ export async function renameDrive(
     OPERATION_SCOPE.CREATE_DIRECTORY | OPERATION_SCOPE.DELETE_DIRECTORY,
     'UPDATE_DRIVE is not allowed.'
   )
-  return await axios.put(
+  const res = await axios.put(
     `${this.host}/drives/${id}`,
     { name },
     {
@@ -80,6 +83,7 @@ export async function renameDrive(
       }
     }
   )
+  return res.data
 }
 
 export async function moveToDrive(
@@ -93,7 +97,8 @@ export async function moveToDrive(
     OPERATION_SCOPE.CREATE_DIRECTORY | OPERATION_SCOPE.DELETE_DIRECTORY,
     'UPDATE_DRIVE is not allowed.'
   )
-  return await axios.put(
+
+  const res = await axios.put(
     `${this.host}/drives/${driveId}`,
     { move: directoryIds, moveFiles: fileIds },
     {
@@ -102,6 +107,7 @@ export async function moveToDrive(
       }
     }
   )
+  return res.data
 }
 
 export async function deleteDrive(this: DeltaStorageSDK, id: string) {
@@ -110,11 +116,13 @@ export async function deleteDrive(this: DeltaStorageSDK, id: string) {
     OPERATION_SCOPE.DELETE_DIRECTORY,
     'DELETE_DRIVE is not allowed.'
   )
-  return await axios.delete(`${this.host}/drives/${id}`, {
+  const res = await axios.delete(`${this.host}/drives/${id}`, {
     headers: {
       Authorization: `Bearer ${this.apiKey}`
     }
   })
+
+  return res.data
 }
 
 export async function readDriveSize(
