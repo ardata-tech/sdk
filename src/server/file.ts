@@ -128,3 +128,58 @@ export async function updateFile(
     }
   )
 }
+
+export async function getFileReplications(
+  this: DeltaStorageSDK,
+  cid: string
+): Promise<
+  | {
+      IPFS: any
+      Sia: any
+      Filecoin: any
+      Filefilego: any
+    }
+  | undefined
+> {
+  verifyAuthorizedCommand(
+    this.scope,
+    OPERATION_SCOPE.READ_FILE,
+    'READ_FILE is not allowed.'
+  )
+  let replicationData = {
+    IPFS: {},
+    Sia: {},
+    Filecoin: {},
+    Filefilego: {}
+  }
+  try {
+    const ipfsResponse = await axios.get(`${this.host}/files/metadata/${cid}`, {
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
+      }
+    })
+
+    const siaResponse = await axios.get(
+      `${this.siaHost}/open/object/meta/${this.userId}/${cid}`,
+      {
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`
+        }
+      }
+    )
+
+    const siaMetadata = siaResponse?.data
+    const ipfsMetadata = ipfsResponse?.data
+
+    if (siaMetadata) {
+      replicationData.Sia = siaMetadata
+    }
+    if (ipfsMetadata) {
+      replicationData.IPFS = ipfsMetadata
+    }
+  } catch (error) {
+    console.log(error)
+  }
+
+  return replicationData
+}

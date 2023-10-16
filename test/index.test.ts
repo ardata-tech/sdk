@@ -244,3 +244,11 @@ test('should be able to verify encryption key', async () => {
   expect(data.success).toBeTruthy()
   expect(data.isVerify).toBeTruthy()
 })
+
+test('should be able get all file replications', async () => {
+  const replications = await sdk.getFileReplications(
+    'bafybeicq3v2b44mbw7kv7tbzr6jmala7ipxwclugw56tomwtvmz3bdqls4'
+  )
+
+  expect(replications?.Sia).toHaveProperty('hasMore')
+})

@@ -26,13 +26,17 @@ class _DeltaStorageSDK {
   public readonly host: string
   public readonly webAppHost: string
   public readonly listener: Socket
+  public readonly userId: string
+  public readonly siaHost: string
 
   constructor(config: DeltaStorageConfig) {
     const [_apiKeyId, scope, _userId, _hash] = config.apiKey.split('.')
     this.apiKey = config.apiKey
+    this.userId = _userId
     this.scope = parseInt(scope)
     this.host = 'https://api.delta.storage'
     this.webAppHost = 'https://app.delta.storage'
+    this.siaHost = 'https://urchin-app-lxzws.ondigitalocean.app'
     this.host = this.host.slice(-1) === '/' ? this.host.slice(0, -1) : this.host
     this.webAppHost =
       this.webAppHost.slice(-1) === '/'
