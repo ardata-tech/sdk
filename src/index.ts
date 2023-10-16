@@ -5,6 +5,7 @@ import * as ListenerOperations from './server/listeners'
 import * as StorageOperations from './web-app/storage'
 import * as FileAccessOperations from './web-app/file-access'
 import * as SettingsOperations from './web-app/settings'
+import * as DriveOperations from './server/drive'
 
 export interface DeltaStorageConfig {
   apiKey: string
@@ -16,7 +17,8 @@ const myClassMethods = {
   ...StorageOperations,
   ...ListenerOperations,
   ...FileAccessOperations,
-  ...SettingsOperations
+  ...SettingsOperations,
+  ...DriveOperations
 }
 class _DeltaStorageSDK {
   public readonly apiKey: string
