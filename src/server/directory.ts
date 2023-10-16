@@ -34,9 +34,9 @@ export async function readDirectoryBySegment(
     OPERATION_SCOPE.READ_DIRECTORY,
     'READ_DIRECTORY is not allowed.'
   )
-  const query = segments.split('/').join('&segment=')
+  const query = segments.split('/').join('&segment[]=')
 
-  return await axios.get(`${this.host}/directory?segment=${query}`, {
+  return await axios.get(`${this.host}/directory?segment[]=${query}`, {
     headers: {
       Authorization: `Bearer ${this.apiKey}`
     }
