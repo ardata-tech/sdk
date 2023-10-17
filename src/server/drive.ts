@@ -46,13 +46,15 @@ export async function createDrive(
   this: DeltaStorageSDK,
   name: string,
   storageClass?: string
-) {
+): Promise<Pick<Directory, 'id' | 'name' | 'storageClassName'>> {
   verifyAuthorizedCommand(
     this.scope,
     OPERATION_SCOPE.CREATE_DIRECTORY,
     'CREATE_DRIVE is not allowed.'
   )
-  const res = await axios.post(
+  const res = await axios.post<
+    Pick<Directory, 'id' | 'name' | 'storageClassName'>
+  >(
     `${this.host}/drives/create`,
     { name, storageClass },
     {
