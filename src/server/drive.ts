@@ -63,7 +63,7 @@ export async function createDrive(
       }
     }
   )
-  return { ...res.data }
+  return res.data
 }
 
 export async function renameDrive(
