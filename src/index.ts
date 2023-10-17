@@ -34,9 +34,9 @@ class _DeltaStorageSDK {
     this.apiKey = config.apiKey
     this.userId = _userId
     this.scope = parseInt(scope)
-    this.host = 'https://api.delta.storage'
-    this.webAppHost = 'https://app.delta.storage'
-    this.siaHost = 'https://urchin-app-lxzws.ondigitalocean.app'
+    this.host = 'http://localhost:1337'
+    this.webAppHost = 'http://localhost:3000'
+    this.siaHost = 'https://sia-integration.delta.storage'
     this.host = this.host.slice(-1) === '/' ? this.host.slice(0, -1) : this.host
     this.webAppHost =
       this.webAppHost.slice(-1) === '/'
