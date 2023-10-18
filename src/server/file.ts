@@ -147,19 +147,48 @@ export async function getFileReplications(
     OPERATION_SCOPE.READ_FILE,
     'READ_FILE is not allowed.'
   )
-  let replicationData = {
+  let replicationData: {
+    IPFS: IPFSMetadata | null
+    Sia: SiaMetadata | null
+    Filecoin: any
+    Filefilego: any
+  } = {
     IPFS: null,
     Sia: null,
     Filecoin: null,
     Filefilego: null
   }
+  replicationData.IPFS = await this.getIPFSFileMetadata(cid)
+  replicationData.Sia = await this.getSiaFileMetadata(cid)
+
+  return replicationData
+}
+
+export async function getIPFSFileMetadata(
+  this: DeltaStorageSDK,
+  cid: string
+): Promise<IPFSMetadata | null> {
   try {
     const ipfsResponse = await axios.get(`${this.host}/files/metadata/${cid}`, {
       headers: {
         Authorization: `Bearer ${this.apiKey}`
       }
     })
+    const ipfsMetadata = ipfsResponse?.data
+    if (ipfsMetadata) {
+      return ipfsMetadata
+    }
+  } catch (error) {
+    console.log(error)
+  }
+  return null
+}
 
+export async function getSiaFileMetadata(
+  this: DeltaStorageSDK,
+  cid: string
+): Promise<SiaMetadata | null> {
+  try {
     const siaResponse = await axios.get(
       `${this.siaHost}/open/object/meta/${this.userId}/${cid}`,
       {
@@ -168,19 +197,12 @@ export async function getFileReplications(
         }
       }
     )
-
     const siaMetadata = siaResponse?.data
-    const ipfsMetadata = ipfsResponse?.data
-
     if (siaMetadata) {
-      replicationData.Sia = siaMetadata
-    }
-    if (ipfsMetadata) {
-      replicationData.IPFS = ipfsMetadata
+      return siaMetadata
     }
   } catch (error) {
     console.log(error)
   }
-
-  return replicationData
+  return null
 }

@@ -25,8 +25,8 @@ afterAll(async () => {
 
 test('should be able to create a drive', async () => {
   const drive = await sdk.createDrive('Drive')
-  expect(drive.data.name).toEqual('Drive')
-  driveId = drive.data.id
+  expect(drive.name).toEqual('Drive')
+  driveId = drive.id
 })
 
 test('should be able to view drive contents', async () => {
@@ -99,7 +99,7 @@ test('should be able to get the drive size', async () => {
   const drive = await sdk.createDrive('drive delete')
   const totalSize = await sdk.readDriveSize(driveId)
   expect(typeof totalSize).toBe('number')
-  sdk.deleteDrive(drive.data.id)
+  sdk.deleteDrive(drive.id)
 })
 
 test('should be able to soft delete a directory', async () => {
@@ -247,8 +247,9 @@ test('should be able to verify encryption key', async () => {
 
 test('should be able get all file replications', async () => {
   const replications = await sdk.getFileReplications(
-    'bafybeicq3v2b44mbw7kv7tbzr6jmala7ipxwclugw56tomwtvmz3bdqls4'
+    'bafybeiht6aglwc7ooxau6jfvw534o7qm7qfcyj4zmjtlppucsr5k5thjzq'
   )
 
   expect(replications?.Sia).toHaveProperty('hasMore')
+  expect(replications?.IPFS).toHaveProperty('name')
 })
