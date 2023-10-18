@@ -42,3 +42,30 @@ export enum DSNProviders {
   FILECOIN,
   FILEFILEGO
 }
+
+export interface SiaMetaData {
+  hasMore: boolean
+  object: {
+    eTag: string
+    health: number
+    mimeType: string
+    modTime: Date
+    name: string
+    size: number
+    key: string
+    slabs: Array<{
+      slab: {
+        health: number
+        key: string
+        minShards: number
+        shards: Array<{
+          host: string
+          root: string
+        }>
+      }
+      offset: number
+      length: number
+    }> | null
+    partialSlab: any | null
+  }
+}
