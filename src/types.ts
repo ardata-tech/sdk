@@ -84,3 +84,27 @@ export interface IPFSMetadata {
   createdAt: Date
   updatedAt: Date
 }
+
+export interface SiaResponseData {
+  links: string[]
+  status: string
+  metadata: SiaMetadata | null
+}
+
+export interface IPFSResponseData {
+  links: string[]
+  status: string
+  metadata: IPFSMetadata | null
+}
+
+export interface FilecoinResponseData {
+  links: string[]
+  status: string
+  metadata: any
+}
+
+export interface FilefilegoResponseData {
+  links: string[]
+  status: string
+  metadata: any
+}

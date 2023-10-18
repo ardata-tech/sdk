@@ -65,7 +65,11 @@ export {
   File,
   DSNProviders,
   IPFSMetadata,
-  SiaMetadata
+  SiaMetadata,
+  FilecoinResponseData,
+  FilefilegoResponseData,
+  IPFSResponseData,
+  SiaResponseData
 } from './types'
 
 export default DeltaStorageSDK

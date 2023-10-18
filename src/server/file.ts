@@ -1,8 +1,13 @@
+import axios from 'axios'
 import { verifyAuthorizedCommand } from '../authorization'
 import { OPERATION_SCOPE } from '../constants'
 import DeltaStorageSDK from '../index'
-import axios from 'axios'
-import { IPFSMetadata, SiaMetadata } from '../types'
+import {
+  IPFSMetadata,
+  IPFSResponseData,
+  SiaMetadata,
+  SiaResponseData
+} from '../types'
 
 export async function readFile(this: DeltaStorageSDK, id?: string) {
   verifyAuthorizedCommand(
@@ -135,8 +140,8 @@ export async function getFileReplications(
   cid: string
 ): Promise<
   | {
-      IPFS: IPFSMetadata | null
-      Sia: SiaMetadata | null
+      IPFS: IPFSResponseData
+      Sia: SiaResponseData
       Filecoin: any
       Filefilego: any
     }
@@ -148,18 +153,43 @@ export async function getFileReplications(
     'READ_FILE is not allowed.'
   )
   let replicationData: {
-    IPFS: IPFSMetadata | null
-    Sia: SiaMetadata | null
+    IPFS: IPFSResponseData
+    Sia: SiaResponseData
     Filecoin: any
     Filefilego: any
   } = {
-    IPFS: null,
-    Sia: null,
-    Filecoin: null,
-    Filefilego: null
+    IPFS: {
+      links: [
+        'https://edgeurid.estuary.tech/gw/',
+        'https://storage.web3.ph.dev/gw/',
+        'https://delta.vulcaniclabs.com/gw/'
+      ],
+      status: 'Replicated',
+      metadata: null
+    },
+    Sia: {
+      links: ['https://sia-integration.delta.storage/open/object/meta/'],
+      status: '',
+      metadata: null
+    },
+    Filecoin: {
+      links: [],
+      status: '',
+      metadata: null
+    },
+    Filefilego: {
+      links: [],
+      status: '',
+      metadata: null
+    }
   }
-  replicationData.IPFS = await this.getIPFSFileMetadata(cid)
-  replicationData.Sia = await this.getSiaFileMetadata(cid)
+  replicationData.IPFS.metadata = await this.getIPFSFileMetadata(cid)
+  replicationData.Sia.metadata = await this.getSiaFileMetadata(cid)
+  replicationData.Sia.status =
+    replicationData.Sia.metadata === null ||
+    !replicationData.Sia.metadata?.object.eTag.length
+      ? 'In Progress'
+      : 'Replicated'
 
   return replicationData
 }
