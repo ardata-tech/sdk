@@ -60,6 +60,12 @@ export type DeltaStorageSDK = InstanceType<typeof _DeltaStorageSDK> &
 export const DeltaStorageSDK = _DeltaStorageSDK as unknown as {
   new (...args: ConstructorParameters<typeof _DeltaStorageSDK>): DeltaStorageSDK
 }
-export { Directory, File, DSNProviders } from './types'
+export {
+  Directory,
+  File,
+  DSNProviders,
+  IPFSMetadata,
+  SiaMetadata
+} from './types'
 
 export default DeltaStorageSDK

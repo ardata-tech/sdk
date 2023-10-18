@@ -43,7 +43,7 @@ export enum DSNProviders {
   FILEFILEGO
 }
 
-export interface SiaMetaData {
+export interface SiaMetadata {
   hasMore: boolean
   object: {
     eTag: string
@@ -68,4 +68,19 @@ export interface SiaMetaData {
     }> | null
     partialSlab: any | null
   }
+}
+
+export interface IPFSMetadata {
+  name: string
+  cid: string
+  ownerId: string
+  size: number
+  pieceId: string | null
+  onChainId: string | null
+  status: string
+  network: any
+  edgeURL: string
+  contentType: string
+  createdAt: Date
+  updatedAt: Date
 }

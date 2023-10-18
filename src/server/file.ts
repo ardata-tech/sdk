@@ -2,6 +2,7 @@ import { verifyAuthorizedCommand } from '../authorization'
 import { OPERATION_SCOPE } from '../constants'
 import DeltaStorageSDK from '../index'
 import axios from 'axios'
+import { IPFSMetadata, SiaMetadata } from '../types'
 
 export async function readFile(this: DeltaStorageSDK, id?: string) {
   verifyAuthorizedCommand(
@@ -134,8 +135,8 @@ export async function getFileReplications(
   cid: string
 ): Promise<
   | {
-      IPFS: any
-      Sia: any
+      IPFS: IPFSMetadata | null
+      Sia: SiaMetadata | null
       Filecoin: any
       Filefilego: any
     }
@@ -147,10 +148,10 @@ export async function getFileReplications(
     'READ_FILE is not allowed.'
   )
   let replicationData = {
-    IPFS: {},
-    Sia: {},
-    Filecoin: {},
-    Filefilego: {}
+    IPFS: null,
+    Sia: null,
+    Filecoin: null,
+    Filefilego: null
   }
   try {
     const ipfsResponse = await axios.get(`${this.host}/files/metadata/${cid}`, {
