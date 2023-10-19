@@ -1,6 +1,6 @@
 {
   "name": "@delta-storage/sdk",
-  "version": "0.0.20.beta.1.0.3",
+  "version": "0.0.20.beta.1.0.4",
   "license": "MIT",
   "author": "Delta Storage",
   "main": "dist/index.js",
