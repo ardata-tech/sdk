@@ -72,4 +72,6 @@ export {
   SiaResponseData
 } from './types'
 
+export { edgeNodes } from './constants'
+
 export default DeltaStorageSDK
