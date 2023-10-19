@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { verifyAuthorizedCommand } from '../authorization'
-import { OPERATION_SCOPE } from '../constants'
+import { OPERATION_SCOPE, edgeNodes } from '../constants'
 import DeltaStorageSDK from '../index'
 import {
   IPFSMetadata,
@@ -159,11 +159,7 @@ export async function getFileReplications(
     Filefilego: any
   } = {
     IPFS: {
-      links: [
-        'https://edgeurid.estuary.tech/gw/',
-        'https://storage.web3.ph.dev/gw/',
-        'https://delta.vulcaniclabs.com/gw/'
-      ],
+      links: edgeNodes.map((node) => node + '/gw/'),
       status: 'Replicated',
       metadata: null
     },
