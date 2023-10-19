@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { AxiosProgressEvent, GenericAbortSignal } from 'axios'
 import { verifyAuthorizedCommand } from '../authorization'
 import { OPERATION_SCOPE, edgeNodes } from '../constants'
 import DeltaStorageSDK from '../index'
@@ -26,7 +26,9 @@ export async function uploadFile(
   this: DeltaStorageSDK,
   file: any,
   directoryId: string,
-  storageClasses?: string[]
+  storageClasses?: string[],
+  setProgress?: (progress: number) => void,
+  signal?: GenericAbortSignal | undefined
 ) {
   verifyAuthorizedCommand(
     this.scope,
@@ -40,11 +42,35 @@ export async function uploadFile(
   if (storageClasses && storageClasses.length > 0)
     formData.append('storageClasses', JSON.stringify(storageClasses))
 
-  return await axios.post(`${this.host}/files/upload`, formData, {
-    headers: {
-      Authorization: `Bearer ${this.apiKey}`
-    }
-  })
+  const res = await axios
+    .post(`${this.host}/files/upload`, formData, {
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
+      },
+      signal,
+      onUploadProgress: (progressEvent) => {
+        if (!setProgress) return
+        setProgress(0)
+        const progress = (progressEvent.loaded / progressEvent.total!) * 50
+        setProgress(progress)
+      },
+      onDownloadProgress: (progressEvent) => {
+        if (!setProgress) return
+        const progress = 50 + (progressEvent.loaded / progressEvent.total!) * 50
+        setProgress(progress)
+      }
+    })
+    .catch(function (e) {
+      // if the reason behind the failure
+      // is a cancellation
+      if (axios.isCancel(e)) {
+        console.error('Uploading canceled')
+      } else {
+        // handle HTTP error...
+      }
+    })
+
+  return res
 }
 
 export async function uploadFiles(
