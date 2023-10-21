@@ -5,6 +5,7 @@ import * as ListenerOperations from './server/listeners'
 import * as StorageOperations from './web-app/storage'
 import * as FileAccessOperations from './web-app/file-access'
 import * as SettingsOperations from './web-app/settings'
+import * as DriveOperations from './server/drive'
 
 export interface DeltaStorageConfig {
   apiKey: string
@@ -16,7 +17,8 @@ const myClassMethods = {
   ...StorageOperations,
   ...ListenerOperations,
   ...FileAccessOperations,
-  ...SettingsOperations
+  ...SettingsOperations,
+  ...DriveOperations
 }
 class _DeltaStorageSDK {
   public readonly apiKey: string
@@ -24,13 +26,17 @@ class _DeltaStorageSDK {
   public readonly host: string
   public readonly webAppHost: string
   public readonly listener: Socket
+  public readonly userId: string
+  public readonly siaHost: string
 
   constructor(config: DeltaStorageConfig) {
     const [_apiKeyId, scope, _userId, _hash] = config.apiKey.split('.')
     this.apiKey = config.apiKey
+    this.userId = _userId
     this.scope = parseInt(scope)
     this.host = 'https://api.delta.storage'
     this.webAppHost = 'https://app.delta.storage'
+    this.siaHost = 'https://sia-integration.delta.storage'
     this.host = this.host.slice(-1) === '/' ? this.host.slice(0, -1) : this.host
     this.webAppHost =
       this.webAppHost.slice(-1) === '/'
@@ -54,5 +60,18 @@ export type DeltaStorageSDK = InstanceType<typeof _DeltaStorageSDK> &
 export const DeltaStorageSDK = _DeltaStorageSDK as unknown as {
   new (...args: ConstructorParameters<typeof _DeltaStorageSDK>): DeltaStorageSDK
 }
+export {
+  Directory,
+  File,
+  DSNProviders,
+  IPFSMetadata,
+  SiaMetadata,
+  FilecoinResponseData,
+  FilefilegoResponseData,
+  IPFSResponseData,
+  SiaResponseData
+} from './types'
+
+export { edgeNodes } from './constants'
 
 export default DeltaStorageSDK
