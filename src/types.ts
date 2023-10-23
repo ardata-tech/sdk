@@ -34,6 +34,7 @@ export interface File {
   network?: string
   onChainId?: string
   edgeURL: string
+  dataURI: string
 }
 
 export enum DSNProviders {
