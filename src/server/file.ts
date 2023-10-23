@@ -190,7 +190,7 @@ export async function getFileReplications(
       metadata: null
     },
     Sia: {
-      links: ['https://sia-integration.delta.storage/open/object/meta/'],
+      links: [`https://sia-integration.delta.storage/open/object/meta/${this.userId}/`],
       status: '',
       metadata: null
     },
