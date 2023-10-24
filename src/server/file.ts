@@ -191,7 +191,9 @@ export async function getFileReplications(
       metadata: null
     },
     Sia: {
-      links: [`https://sia-integration.delta.storage/open/object/meta/${this.userId}/`],
+      links: [
+        `https://sia-integration.delta.storage/open/object/meta/${this.userId}/`
+      ],
       status: '',
       metadata: null
     },
@@ -257,5 +259,25 @@ export async function getSiaFileMetadata(
   } catch (error) {
     console.log(error)
   }
+  return null
+}
+
+export async function getDataURI(
+  this: DeltaStorageSDK,
+  id: string
+): Promise<File | null> {
+  try {
+    const dataURI = await axios.get<File>(`${this.host}/files/data-uri/${id}`, {
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`
+      }
+    })
+
+    const dataURIdata = dataURI.data
+    if (dataURIdata) return dataURIdata
+  } catch (error) {
+    console.log(error)
+  }
+
   return null
 }
