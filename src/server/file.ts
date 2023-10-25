@@ -268,14 +268,15 @@ export async function getDataURI(
   password?: string
 ): Promise<File | null> {
   try {
-    const dataURI = await axios.get<File>(`${this.host}/files/data-uri/${id}`, {
-      data: {
-        password
-      },
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`
+    const dataURI = await axios.post<File>(
+      `${this.host}/files/data-uri/${id}`,
+      { password },
+      {
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`
+        }
       }
-    })
+    )
 
     const dataURIdata = dataURI.data
     if (dataURIdata) return dataURIdata
