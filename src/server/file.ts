@@ -264,10 +264,14 @@ export async function getSiaFileMetadata(
 
 export async function getDataURI(
   this: DeltaStorageSDK,
-  id: string
+  id: string,
+  password?: string
 ): Promise<File | null> {
   try {
     const dataURI = await axios.get<File>(`${this.host}/files/data-uri/${id}`, {
+      data: {
+        password
+      },
       headers: {
         Authorization: `Bearer ${this.apiKey}`
       }
