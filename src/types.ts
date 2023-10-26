@@ -35,6 +35,7 @@ export interface File {
   onChainId?: string
   edgeURL: string
   dataURI: string
+  isEncrypted: boolean
 }
 
 export enum DSNProviders {
