@@ -1,8 +1,9 @@
-import axios, { AxiosProgressEvent, GenericAbortSignal } from 'axios'
+import axios, { GenericAbortSignal } from 'axios'
 import { verifyAuthorizedCommand } from '../authorization'
 import { OPERATION_SCOPE, edgeNodes } from '../constants'
 import DeltaStorageSDK from '../index'
 import {
+  File,
   IPFSMetadata,
   IPFSResponseData,
   SiaMetadata,
@@ -15,7 +16,7 @@ export async function readFile(this: DeltaStorageSDK, id?: string) {
     OPERATION_SCOPE.READ_FILE,
     'READ_FILE is not allowed.'
   )
-  return await axios.get(`${this.host}/files/${id ?? ''}`, {
+  return await axios.get<File>(`${this.host}/files/${id ?? ''}`, {
     headers: {
       Authorization: `Bearer ${this.apiKey}`
     }
@@ -190,7 +191,9 @@ export async function getFileReplications(
       metadata: null
     },
     Sia: {
-      links: ['https://sia-integration.delta.storage/open/object/meta/'],
+      links: [
+        `https://sia-integration.delta.storage/open/object/meta/${this.userId}/`
+      ],
       status: '',
       metadata: null
     },
@@ -256,5 +259,30 @@ export async function getSiaFileMetadata(
   } catch (error) {
     console.log(error)
   }
+  return null
+}
+
+export async function getDataURI(
+  this: DeltaStorageSDK,
+  id: string,
+  password?: string
+): Promise<File | null> {
+  try {
+    const dataURI = await axios.post<File>(
+      `${this.host}/files/data-uri/${id}`,
+      { password },
+      {
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`
+        }
+      }
+    )
+
+    const dataURIdata = dataURI.data
+    if (dataURIdata) return dataURIdata
+  } catch (error) {
+    console.log(error)
+  }
+
   return null
 }
