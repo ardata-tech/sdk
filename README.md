@@ -71,7 +71,7 @@ Once you've set up your instance, using the Delta Storage SDK is easy as follows
   - [verifyFileAccessPassword](https://delta-storage.readme.io/reference/verifyfileaccesspassword)
   - [updateFileAccess](https://delta-storage.readme.io/reference/updatefileaccess)
   - [deleteFileAccess](https://delta-storage.readme.io/reference/deletefileaccess)
-- General
+- Account
   - [getTotalSize](https://delta-storage.readme.io/reference/gettotalsize) (Storage Used)
   - [readStorage](https://delta-storage.readme.io/reference/readstorage) (Storage Capacity)
   - [readSettings](https://delta-storage.readme.io/reference/readsettings)
