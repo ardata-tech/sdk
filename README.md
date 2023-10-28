@@ -1,10 +1,12 @@
 # Delta Storage SDK
 
-Official SDK for [Delta Storage](https://delta.storage/)
+Official SDK for [Delta Storage App](https://app.delta.storage/)
+
+![deltaui](https://github.com/delta-storage/sdk/assets/71435340/557ee2c4-c0ca-4d25-8792-8e9b6002cffc)
 
 ## Introduction
 
-The Delta Storage SDK is a JavaScript library that provides asbtraction for interacting with the [Delta Storage API](https://delta-storage.readme.io). This SDK allows you to perform various operations such as reading files, uploading files, managing directories, and more.
+This [Documentation](https://delta-storage.readme.io/reference/quick-start) provides detailed information on how to use delta storage developer tools to interact with directories and files in your application.
 
 ## Installation
 
