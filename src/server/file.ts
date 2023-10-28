@@ -266,20 +266,21 @@ export async function getDataURI(
   this: DeltaStorageSDK,
   id: string,
   password?: string
-): Promise<File | null> {
+): Promise<string | null> {
   try {
-    const dataURI = await axios.post<File>(
+    const response = await axios.post(
       `${this.host}/files/data-uri/${id}`,
       { password },
       {
+        responseType: 'blob',
         headers: {
           Authorization: `Bearer ${this.apiKey}`
         }
       }
     )
+    const url = window.URL.createObjectURL(new Blob([response.data]))
 
-    const dataURIdata = dataURI.data
-    if (dataURIdata) return dataURIdata
+    if (url) return url
   } catch (error) {
     console.log(error)
   }
