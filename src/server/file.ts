@@ -286,3 +286,32 @@ export async function getDataURI(
 
   return null
 }
+
+export async function getDecryptedFile(
+  this: DeltaStorageSDK,
+  id: string,
+  password?: string
+): Promise<string | null> {
+  try {
+    const response = await axios.post(
+      `${this.host}/files/decrypt/${id}`,
+      { password },
+      {
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`
+        }
+      }
+    )
+    const contentType = response.headers['content-type']
+    const url = window.URL.createObjectURL(
+      new Blob([response.data], { type: contentType })
+    )
+
+    if (url) return url
+  } catch (error) {
+    console.log(error)
+  }
+
+  return null
+}
