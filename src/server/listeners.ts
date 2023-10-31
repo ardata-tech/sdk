@@ -44,7 +44,7 @@ const ListenerOperations = (config: Config): ListenerOperationsInterface => {
     onReadDirectorySegmentChange: ({ segments, onChange }) => {
       config.listener.on('directory:change', async () => {
         const res = await dirOps.getBySegment({ segments })
-        onChange(res.data)
+        onChange(res)
       })
     }
   }
