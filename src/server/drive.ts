@@ -1,146 +1,138 @@
 import { verifyAuthorizedCommand } from '../authorization'
 import { OPERATION_SCOPE } from '../constants'
-import DeltaStorageSDK from '../index'
 import axios from 'axios'
 import { Directory, File } from '../types'
+import { Config } from '..'
 
-export async function listAllDrives(
-  this: DeltaStorageSDK
-): Promise<Directory[]> {
-  verifyAuthorizedCommand(
-    this.scope,
-    OPERATION_SCOPE.READ_DIRECTORY,
-    'LIST_ALL_DRIVES is not allowed.'
-  )
-  const res = await axios.get(`${this.host}/drives`, {
-    headers: {
-      Authorization: `Bearer ${this.apiKey}`
-    }
-  })
-  return res.data
+export interface DriveOperationsInterface {
+  getAll: () => Promise<Directory[]>
+  contents: (params: {
+    id: string
+  }) => Promise<{ directories: Directory[]; files: File[] }>
+  create: (params: {
+    name: string
+    storageClass?: string
+  }) => Promise<Pick<Directory, 'id' | 'name' | 'storageClassName'>>
+  rename: (params: { id: string; name: string }) => Promise<any>
+  move: (params: {
+    driveId: string
+    directoryIdsToMove: string[]
+    fileIdsToMove?: string[]
+  }) => Promise<any>
+  delete: (params: { id: string }) => Promise<any>
+  getTotalSize: (params: { id: string }) => Promise<bigint>
 }
 
-export async function viewDriveContents(
-  this: DeltaStorageSDK,
-  id: string
-): Promise<{
-  data: {
-    directories: Directory[]
-    files: File[]
+const DriveOperations = (config: Config): DriveOperationsInterface => {
+  return {
+    getAll: async () => {
+      verifyAuthorizedCommand(
+        config.scope,
+        OPERATION_SCOPE.READ_DIRECTORY,
+        'LIST_ALL_DRIVES is not allowed.'
+      )
+      const res = await axios.get(`${config.host}/drives`, {
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`
+        }
+      })
+      return res.data
+    },
+    contents: async ({ id }) => {
+      verifyAuthorizedCommand(
+        config.scope,
+        OPERATION_SCOPE.READ_DIRECTORY,
+        'VIEW_DRIVE_CONTENTS is not allowed.'
+      )
+      const res = await axios.get(`${config.host}/drives/${id}/contents`, {
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`
+        }
+      })
+      return res.data
+    },
+    create: async ({ name, storageClass }) => {
+      verifyAuthorizedCommand(
+        config.scope,
+        OPERATION_SCOPE.CREATE_DIRECTORY,
+        'CREATE_DRIVE is not allowed.'
+      )
+      const res = await axios.post<
+        Pick<Directory, 'id' | 'name' | 'storageClassName'>
+      >(
+        `${config.host}/drives/create`,
+        { name, storageClass },
+        {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        }
+      )
+      return res.data
+    },
+    rename: async ({ id, name }) => {
+      verifyAuthorizedCommand(
+        config.scope,
+        OPERATION_SCOPE.CREATE_DIRECTORY | OPERATION_SCOPE.DELETE_DIRECTORY,
+        'UPDATE_DRIVE is not allowed.'
+      )
+      const res = await axios.put(
+        `${config.host}/drives/${id}`,
+        { name },
+        {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        }
+      )
+      return res.data
+    },
+    move: async ({ driveId, directoryIdsToMove, fileIdsToMove }) => {
+      verifyAuthorizedCommand(
+        config.scope,
+        OPERATION_SCOPE.CREATE_DIRECTORY | OPERATION_SCOPE.DELETE_DIRECTORY,
+        'UPDATE_DRIVE is not allowed.'
+      )
+
+      const res = await axios.put(
+        `${config.host}/drives/${driveId}`,
+        { move: directoryIdsToMove, moveFiles: fileIdsToMove },
+        {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        }
+      )
+      return res.data
+    },
+    delete: async ({ id }) => {
+      verifyAuthorizedCommand(
+        config.scope,
+        OPERATION_SCOPE.DELETE_DIRECTORY,
+        'DELETE_DRIVE is not allowed.'
+      )
+      const res = await axios.delete(`${config.host}/drives/${id}`, {
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`
+        }
+      })
+
+      return res.data
+    },
+    getTotalSize: async ({ id }) => {
+      verifyAuthorizedCommand(
+        config.scope,
+        OPERATION_SCOPE.READ_DIRECTORY,
+        'READ_DRIVE is not allowed.'
+      )
+      const result = await axios.get(`${config.host}/drives/${id}/size`, {
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`
+        }
+      })
+      return result.data.totalSize
+    }
   }
-}> {
-  verifyAuthorizedCommand(
-    this.scope,
-    OPERATION_SCOPE.READ_DIRECTORY,
-    'VIEW_DRIVE_CONTENTS is not allowed.'
-  )
-  const res = await axios.get(`${this.host}/drives/${id}/contents`, {
-    headers: {
-      Authorization: `Bearer ${this.apiKey}`
-    }
-  })
-  return res.data
 }
 
-export async function createDrive(
-  this: DeltaStorageSDK,
-  name: string,
-  storageClass?: string
-): Promise<Pick<Directory, 'id' | 'name' | 'storageClassName'>> {
-  verifyAuthorizedCommand(
-    this.scope,
-    OPERATION_SCOPE.CREATE_DIRECTORY,
-    'CREATE_DRIVE is not allowed.'
-  )
-  const res = await axios.post<
-    Pick<Directory, 'id' | 'name' | 'storageClassName'>
-  >(
-    `${this.host}/drives/create`,
-    { name, storageClass },
-    {
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`
-      }
-    }
-  )
-  return res.data
-}
-
-export async function renameDrive(
-  this: DeltaStorageSDK,
-  id: string,
-  name: string
-) {
-  verifyAuthorizedCommand(
-    this.scope,
-    OPERATION_SCOPE.CREATE_DIRECTORY | OPERATION_SCOPE.DELETE_DIRECTORY,
-    'UPDATE_DRIVE is not allowed.'
-  )
-  const res = await axios.put(
-    `${this.host}/drives/${id}`,
-    { name },
-    {
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`
-      }
-    }
-  )
-  return res.data
-}
-
-export async function moveToDrive(
-  this: DeltaStorageSDK,
-  driveId: string,
-  directoryIds: string[],
-  fileIds?: string[]
-) {
-  verifyAuthorizedCommand(
-    this.scope,
-    OPERATION_SCOPE.CREATE_DIRECTORY | OPERATION_SCOPE.DELETE_DIRECTORY,
-    'UPDATE_DRIVE is not allowed.'
-  )
-
-  const res = await axios.put(
-    `${this.host}/drives/${driveId}`,
-    { move: directoryIds, moveFiles: fileIds },
-    {
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`
-      }
-    }
-  )
-  return res.data
-}
-
-export async function deleteDrive(this: DeltaStorageSDK, id: string) {
-  verifyAuthorizedCommand(
-    this.scope,
-    OPERATION_SCOPE.DELETE_DIRECTORY,
-    'DELETE_DRIVE is not allowed.'
-  )
-  const res = await axios.delete(`${this.host}/drives/${id}`, {
-    headers: {
-      Authorization: `Bearer ${this.apiKey}`
-    }
-  })
-
-  return res.data
-}
-
-export async function readDriveSize(
-  this: DeltaStorageSDK,
-  id: string
-): Promise<bigint> {
-  verifyAuthorizedCommand(
-    this.scope,
-    OPERATION_SCOPE.READ_DIRECTORY,
-    'READ_DRIVE is not allowed.'
-  )
-  const result = await axios.get(`${this.host}/drives/${id}/size`, {
-    headers: {
-      Authorization: `Bearer ${this.apiKey}`
-    }
-  })
-
-  return result.data.totalSize
-}
+export default DriveOperations
