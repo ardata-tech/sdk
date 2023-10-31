@@ -52,12 +52,7 @@ export async function uploadFile(
       onUploadProgress: (progressEvent) => {
         if (!setProgress) return
         setProgress(0)
-        const progress = (progressEvent.loaded / progressEvent.total!) * 50
-        setProgress(progress)
-      },
-      onDownloadProgress: (progressEvent) => {
-        if (!setProgress) return
-        const progress = 50 + (progressEvent.loaded / progressEvent.total!) * 50
+        const progress = (progressEvent.loaded * 100) / progressEvent.total!
         setProgress(progress)
       }
     })
