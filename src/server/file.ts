@@ -58,11 +58,12 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.READ_FILE,
         'READ_FILE is not allowed.'
       )
-      return await axios.get(`${config.host}/files/`, {
+      const res = await axios.get(`${config.host}/files/`, {
         headers: {
           Authorization: `Bearer ${config.apiKey}`
         }
       })
+      return res.data
     },
     details: async ({ id }) => {
       verifyAuthorizedCommand(
@@ -70,11 +71,12 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.READ_FILE,
         'READ_FILE is not allowed.'
       )
-      return await axios.get(`${config.host}/files/${id}`, {
+      const res = await axios.get(`${config.host}/files/${id}`, {
         headers: {
           Authorization: `Bearer ${config.apiKey}`
         }
       })
+      return res.data
     },
     upload: async ({
       file,
@@ -152,11 +154,12 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.DELETE_FILE,
         'DELETE_FILE is not allowed.'
       )
-      return await axios.delete(`${config.host}/files/${id}`, {
+      const res = await axios.delete(`${config.host}/files/${id}`, {
         headers: {
           Authorization: `Bearer ${config.apiKey}`
         }
       })
+      return res.data
     },
     rename: async ({ id, name }) => {
       verifyAuthorizedCommand(
@@ -164,7 +167,7 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.UPLOAD_FILE | OPERATION_SCOPE.DELETE_FILE,
         'RENAME_FILE is not allowed.'
       )
-      return await axios.put(
+      const res = await axios.put(
         `${config.host}/files/${id}`,
         { name },
         {
@@ -173,6 +176,7 @@ const FileOperations = (config: Config): FileOperationsInterface => {
           }
         }
       )
+      return res.data
     },
     update: async ({ id, name, addStorageClasses, removeStorageClasses }) => {
       verifyAuthorizedCommand(
@@ -180,7 +184,7 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.UPLOAD_FILE | OPERATION_SCOPE.DELETE_FILE,
         'UPDATE_FILE is not allowed.'
       )
-      return await axios.put(
+      const res = await axios.put(
         `${config.host}/files/${id}`,
         { name, addStorageClasses, removeStorageClasses },
         {
@@ -189,6 +193,7 @@ const FileOperations = (config: Config): FileOperationsInterface => {
           }
         }
       )
+      return res.data
     },
     getReplications: async ({ cid }) => {
       verifyAuthorizedCommand(
