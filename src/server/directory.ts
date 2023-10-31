@@ -9,7 +9,7 @@ export interface DirectoryOperationsInterface {
     id?: string
   }) => Promise<{ directories: Directory[]; files: File[] }>
   getBySegment: (params: { segments: string }) => Promise<{
-    directories: Pick<Directory, 'name' | 'id'>
+    directories: Pick<Directory, 'name' | 'id'>[]
     directoryLink: string
   }>
   create: (params: {
