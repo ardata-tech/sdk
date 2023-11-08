@@ -16,6 +16,10 @@ import SettingsOperations, {
 import StorageOperations, {
   StorageOperationsInterface
 } from './web-app/storage'
+import EdgeNodeOperations, {
+  EdgeNodeOperationsInterface
+} from './web-app/edge-nodes'
+import { edgeNodes } from './constants'
 export interface InitConfig {
   apiKey: string
 }
@@ -38,6 +42,7 @@ export interface DeltaStorageInit {
   settings: SettingsOperationsInterface
   storage: StorageOperationsInterface
   listener: ListenerOperationsInterface
+  edgeNodes: EdgeNodeOperationsInterface
 }
 
 const DeltaStorage = {
@@ -81,7 +86,8 @@ const DeltaStorage = {
       fileAccess: FileAccessOperations(config),
       settings: SettingsOperations(config),
       storage: StorageOperations(config),
-      listener: ListenerOperations(config)
+      listener: ListenerOperations(config),
+      edgeNodes: EdgeNodeOperations(config, edgeNodes)
     }
   }
 }
