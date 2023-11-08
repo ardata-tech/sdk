@@ -103,7 +103,7 @@ const FileOperations = (config: Config): FileOperationsInterface => {
             Authorization: `Bearer ${config.apiKey}`
           },
           signal,
-          onUploadProgress: (progressEvent) => {
+          onDownloadProgress: (progressEvent) => {
             if (!setProgress) return
             setProgress(0)
             const progress = (progressEvent.loaded * 100) / progressEvent.total!
