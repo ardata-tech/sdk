@@ -1,15 +1,13 @@
 import axios from 'axios'
 import { Config } from '..'
+import { edgeNodes } from '../constants'
 
 export interface EdgeNodeOperationsInterface {
   read: () => Promise<{ edgeNodes: string[] }>
   add: (params: { edgeNode: string }) => Promise<any>
 }
 
-const EdgeNodeOperations = (
-  config: Config,
-  edgeNodes: string[]
-): EdgeNodeOperationsInterface => {
+const EdgeNodeOperations = (config: Config): EdgeNodeOperationsInterface => {
   return {
     read: async () => {
       const result = await axios.get(

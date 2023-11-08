@@ -87,7 +87,7 @@ const DeltaStorage = {
       settings: SettingsOperations(config),
       storage: StorageOperations(config),
       listener: ListenerOperations(config),
-      edgeNodes: EdgeNodeOperations(config, edgeNodes)
+      edgeNodes: EdgeNodeOperations(config)
     }
   }
 }
