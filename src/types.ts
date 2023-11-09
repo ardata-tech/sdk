@@ -112,8 +112,8 @@ export interface FilefilegoResponseData {
 }
 
 export enum RetrievalRequestStatus {
-  IN_PROGRESS,
-  COMPLETED
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED'
 }
 export interface RetrievalRequest {
   id: string
