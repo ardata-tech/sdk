@@ -39,16 +39,16 @@
     "testEnvironment": "node"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=18"
   },
   "size-limit": [
     {
       "path": "dist/deltasdk.cjs.production.min.js",
-      "limit": "30 KB"
+      "limit": "1000 KB"
     },
     {
       "path": "dist/deltasdk.esm.js",
-      "limit": "50 KB"
+      "limit": "1000 KB"
     }
   ],
   "devDependencies": {

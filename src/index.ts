@@ -7,6 +7,9 @@ import FileOperations, { FileOperationsInterface } from './server/file'
 import ListenerOperations, {
   ListenerOperationsInterface
 } from './server/listeners'
+import EdgeNodeOperations, {
+  EdgeNodeOperationsInterface
+} from './web-app/edge-nodes'
 import FileAccessOperations, {
   FileAccessOperationsInterface
 } from './web-app/file-access'
@@ -16,10 +19,9 @@ import SettingsOperations, {
 import StorageOperations, {
   StorageOperationsInterface
 } from './web-app/storage'
-import EdgeNodeOperations, {
-  EdgeNodeOperationsInterface
-} from './web-app/edge-nodes'
-import { edgeNodes } from './constants'
+import RetrievalRequestOperations, {
+  RetrievalRequestOperationsInterface
+} from './server/retrievalRequest'
 export interface InitConfig {
   apiKey: string
 }
@@ -43,11 +45,12 @@ export interface DeltaStorageInit {
   storage: StorageOperationsInterface
   listener: ListenerOperationsInterface
   edgeNodes: EdgeNodeOperationsInterface
+  retrievalRequest: RetrievalRequestOperationsInterface
 }
 
 const DeltaStorage = {
   init({ apiKey }: InitConfig): DeltaStorageInit {
-    const [_, scope, _userId, __] = apiKey.split('.')
+    const [, scope, _userId] = apiKey.split('.')
     const host =
       process.env.DELTA_STORAGE_SERVER_HOST ??
       process.env.NEXT_PUBLIC_DELTA_STORAGE_SERVER_HOST ??
@@ -87,7 +90,8 @@ const DeltaStorage = {
       settings: SettingsOperations(config),
       storage: StorageOperations(config),
       listener: ListenerOperations(config),
-      edgeNodes: EdgeNodeOperations(config)
+      edgeNodes: EdgeNodeOperations(config),
+      retrievalRequest: RetrievalRequestOperations(config)
     }
   }
 }
