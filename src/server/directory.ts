@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { GenericAbortSignal } from 'axios'
 import { verifyAuthorizedCommand } from '../authorization'
 import { OPERATION_SCOPE } from '../constants'
 import { Config } from '..'
@@ -33,6 +33,8 @@ export interface DirectoryOperationsInterface {
   download: (params: {
     id: string
     name: string
+    setProgress?: (progress: number) => void
+    signal?: GenericAbortSignal | undefined
   }) => Promise<{ success: boolean }>
   getZip: (params: {
     id: string
@@ -168,17 +170,32 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
 
       return result.data.totalSize
     },
-    download: async ({ id, name }) => {
+    download: async ({ id, name, signal, setProgress }) => {
       verifyAuthorizedCommand(
         config.scope,
         OPERATION_SCOPE.READ_DIRECTORY,
         'READ_DIRECTORY is not allowed.'
       )
       try {
+        const dir = await axios.get(`${config.host}/directory/${id}/size`, {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        })
+
+        const dirSize = dir.data.totalSize
+
         const response = await axios.get(`${config.host}/directory/${id}/zip`, {
           responseType: 'blob',
           headers: {
             Authorization: `Bearer ${config.apiKey}`
+          },
+          signal,
+          onDownloadProgress: (progressEvent) => {
+            if (!setProgress) return
+            setProgress(0)
+            const progress = (progressEvent.loaded / dirSize) * 100
+            setProgress(progress)
           }
         })
 
@@ -191,6 +208,14 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         window.URL.revokeObjectURL(url)
         return { success: true }
       } catch (error) {
+        // if the reason behind the failure
+        // is a cancellation
+        if (axios.isCancel(error)) {
+          console.error('Downloading canceled')
+        } else {
+          // handle HTTP error...
+        }
+
         return { success: false }
       }
     },

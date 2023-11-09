@@ -47,6 +47,13 @@ export interface FileOperationsInterface {
     password?: string
   }) => Promise<File | null>
   getURL: (params: { id: string; password?: string }) => Promise<string | null>
+  download: (params: {
+    id: string
+    password?: string
+    name: string
+    setProgress?: (progress: number) => void
+    signal?: GenericAbortSignal | undefined
+  }) => Promise<{ success: boolean }>
   getTotalSize: () => Promise<bigint>
 }
 
@@ -103,10 +110,10 @@ const FileOperations = (config: Config): FileOperationsInterface => {
             Authorization: `Bearer ${config.apiKey}`
           },
           signal,
-          onDownloadProgress: (progressEvent) => {
+          onUploadProgress: (progressEvent) => {
             if (!setProgress) return
             setProgress(0)
-            const progress = (progressEvent.loaded * 100) / progressEvent.total!
+            const progress = progressEvent.progress! * 100
             setProgress(progress)
           }
         })
@@ -325,6 +332,51 @@ const FileOperations = (config: Config): FileOperationsInterface => {
       }
 
       return null
+    },
+    download: async ({ id, name, password, signal, setProgress }) => {
+      try {
+        const response = await axios.post(
+          `${config.host}/files/decrypt/${id}`,
+          { password },
+          {
+            responseType: 'blob',
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
+          }
+        )
+        const contentType = response.headers['content-type']
+        const url = window.URL.createObjectURL(
+          new Blob([response.data], { type: contentType })
+        )
+
+        const downloadFile = await axios.get(url, {
+          signal,
+          onDownloadProgress: (progressEvent) => {
+            if (!setProgress) return
+            setProgress(0)
+            const progress = progressEvent.progress! * 100
+            setProgress(progress)
+          }
+        })
+
+        const downloadedUrl = window.URL.createObjectURL(
+          new Blob([downloadFile.data], { type: contentType })
+        )
+
+        const a = document.createElement('a')
+        a.href = downloadedUrl
+        a.download = `${name}.${contentType}`
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+
+        return { success: true }
+      } catch (error) {
+        console.log(error)
+      }
+
+      return { success: false }
     },
     getTotalSize: async () => {
       verifyAuthorizedCommand(
