@@ -105,7 +105,9 @@ export {
   IPFSMetadata,
   IPFSResponseData,
   SiaMetadata,
-  SiaResponseData
+  SiaResponseData,
+  RetrievalRequest,
+  RetrievalRequestStatus
 } from './types'
 
 export { edgeNodes } from './constants'
