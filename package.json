@@ -44,11 +44,11 @@
   "size-limit": [
     {
       "path": "dist/deltasdk.cjs.production.min.js",
-      "limit": "1000 KB"
+      "limit": "4500 ms"
     },
     {
       "path": "dist/deltasdk.esm.js",
-      "limit": "1000 KB"
+      "limit": "4500 ms"
     }
   ],
   "devDependencies": {
