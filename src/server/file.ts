@@ -48,8 +48,7 @@ export interface FileOperationsInterface {
   }) => Promise<File | null>
   getURL: (params: { id: string; password?: string }) => Promise<string | null>
   download: (params: {
-    id: string
-    password?: string
+    url: string
     name: string
     setProgress?: (progress: number) => void
     signal?: GenericAbortSignal | undefined
@@ -333,23 +332,8 @@ const FileOperations = (config: Config): FileOperationsInterface => {
 
       return null
     },
-    download: async ({ id, name, password, signal, setProgress }) => {
+    download: async ({ url, name, signal, setProgress }) => {
       try {
-        const response = await axios.post(
-          `${config.host}/files/decrypt/${id}`,
-          { password },
-          {
-            responseType: 'blob',
-            headers: {
-              Authorization: `Bearer ${config.apiKey}`
-            }
-          }
-        )
-        const contentType = response.headers['content-type']
-        const url = window.URL.createObjectURL(
-          new Blob([response.data], { type: contentType })
-        )
-
         const downloadFile = await axios.get(url, {
           signal,
           onDownloadProgress: (progressEvent) => {
@@ -360,6 +344,7 @@ const FileOperations = (config: Config): FileOperationsInterface => {
           }
         })
 
+        const contentType = downloadFile.headers['content-type']
         const downloadedUrl = window.URL.createObjectURL(
           new Blob([downloadFile.data], { type: contentType })
         )
