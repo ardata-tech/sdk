@@ -68,7 +68,6 @@ const DeltaStorage = {
       auth: {
         token: apiKey
       },
-      transports: ['websocket'],
       autoConnect: false
     })
 
