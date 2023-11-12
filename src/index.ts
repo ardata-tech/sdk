@@ -22,6 +22,7 @@ import StorageOperations, {
 import RetrievalRequestOperations, {
   RetrievalRequestOperationsInterface
 } from './server/retrievalRequest'
+import ExportOperation, { ExportOperationInterface } from './server/export'
 export interface InitConfig {
   apiKey: string
 }
@@ -46,6 +47,7 @@ export interface DeltaStorageInit {
   listener: ListenerOperationsInterface
   edgeNodes: EdgeNodeOperationsInterface
   retrievalRequest: RetrievalRequestOperationsInterface
+  export: (params: ExportOperationInterface) => void
 }
 
 const DeltaStorage = {
@@ -90,7 +92,9 @@ const DeltaStorage = {
       storage: StorageOperations(config),
       listener: ListenerOperations(config),
       edgeNodes: EdgeNodeOperations(config),
-      retrievalRequest: RetrievalRequestOperations(config)
+      retrievalRequest: RetrievalRequestOperations(config),
+      export: ({ id, signal, setProgress }) =>
+        ExportOperation(config)({ id, signal, setProgress })
     }
   }
 }
