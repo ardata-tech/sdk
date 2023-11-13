@@ -27,20 +27,31 @@ const ExportOperation =
 
       const size = totalSize.data.totalSize
 
-      const res = await axios.post(`${config.host}/export/${id}`, undefined, {
-        headers: {
-          Authorization: `Bearer ${config.apiKey}`
-        },
-        signal,
-        onDownloadProgress: (progressEvent) => {
-          if (!setProgress) return
-          setProgress(0)
-          const progress = (progressEvent.loaded / size) * 100
-          setProgress(progress)
+      const response = await axios.post(
+        `${config.host}/export/${id}`,
+        undefined,
+        {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          },
+          signal,
+          onDownloadProgress: (progressEvent) => {
+            if (!setProgress) return
+            setProgress(0)
+            const progress = (progressEvent.loaded / size) * 100
+            setProgress(progress)
+          }
         }
-      })
+      )
 
-      return res.data
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${name}-${Date.now()}.zip`
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      return { success: true }
     } catch (error) {
       // if the reason behind the failure
       // is a cancellation
