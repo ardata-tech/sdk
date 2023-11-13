@@ -27,27 +27,24 @@ const ExportOperation =
 
       const size = totalSize.data.totalSize
 
-      const response = await axios.post(
-        `${config.host}/export/${id}`,
-        undefined,
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
-          },
-          signal,
-          onDownloadProgress: (progressEvent) => {
-            if (!setProgress) return
-            setProgress(0)
-            const progress = (progressEvent.loaded / size) * 100
-            setProgress(progress)
-          }
+      const response = await axios.get(`${config.host}/export/${id}`, {
+        responseType: 'blob',
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`
+        },
+        signal,
+        onDownloadProgress: (progressEvent) => {
+          if (!setProgress) return
+          setProgress(0)
+          const progress = (progressEvent.loaded / size) * 100
+          setProgress(progress)
         }
-      )
+      })
 
       const url = window.URL.createObjectURL(new Blob([response.data]))
       const a = document.createElement('a')
       a.href = url
-      a.download = `${name}-${Date.now()}.zip`
+      a.download = `Delta-${id}.zip`
       document.body.appendChild(a)
       a.click()
       window.URL.revokeObjectURL(url)
@@ -58,6 +55,7 @@ const ExportOperation =
       if (axios.isCancel(error)) {
         console.error('Downloading canceled')
       } else {
+        console.log(error)
         // handle HTTP error...
       }
     }
