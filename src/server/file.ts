@@ -9,7 +9,6 @@ import {
   SiaResponseData
 } from '../index'
 import { Config } from '..'
-import mime from 'mime'
 
 export interface FileOperationsInterface {
   list: () => Promise<File[]>
@@ -347,16 +346,13 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         })
 
         const contentType = downloadFile.headers['content-type']
-        const extension = mime.getExtension(contentType)
         const downloadedUrl = window.URL.createObjectURL(
           new Blob([downloadFile.data], { type: contentType })
         )
 
         const a = document.createElement('a')
         a.href = downloadedUrl
-        a.download = `${name
-          .split(`.${extension === 'qt' ? 'mov' : extension}` ?? '')
-          .at(0)}.${extension === 'qt' ? 'mov' : extension}`
+        a.download = name
         document.body.appendChild(a)
         a.click()
         window.URL.revokeObjectURL(url)
