@@ -46,12 +46,15 @@ export interface FileOperationsInterface {
     id: string
     password?: string
   }) => Promise<File | null>
-  getURL: (params: { id: string; password?: string }) => Promise<string | null>
+  getURL: (params: {
+    id: string
+    password?: string
+    setProgress?: (progress: number) => void
+    signal?: GenericAbortSignal | undefined
+  }) => Promise<string | null>
   download: (params: {
     url: string
     name: string
-    setProgress?: (progress: number) => void
-    signal?: GenericAbortSignal | undefined
   }) => Promise<{ success: boolean }>
   getTotalSize: () => Promise<bigint>
 }
@@ -308,8 +311,16 @@ const FileOperations = (config: Config): FileOperationsInterface => {
 
       return null
     },
-    getURL: async ({ id, password }) => {
+    getURL: async ({ id, password, signal, setProgress }) => {
       try {
+        const file = await axios.get(`${config.host}/files/${id}`, {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        })
+
+        const size = file.data.size
+
         const response = await axios.post(
           `${config.host}/files/decrypt/${id}`,
           { password },
@@ -317,6 +328,13 @@ const FileOperations = (config: Config): FileOperationsInterface => {
             responseType: 'blob',
             headers: {
               Authorization: `Bearer ${config.apiKey}`
+            },
+            signal,
+            onDownloadProgress: (progressEvent) => {
+              if (!setProgress) return
+              setProgress(0)
+              const progress = (progressEvent.loaded / size) * 100
+              setProgress(progress)
             }
           }
         )
@@ -332,29 +350,18 @@ const FileOperations = (config: Config): FileOperationsInterface => {
 
       return null
     },
-    download: async ({ url, name, signal, setProgress }) => {
+    download: async ({ url, name }) => {
       try {
-        const downloadFile = await axios.get(url, {
-          responseType: 'blob',
-          signal,
-          onDownloadProgress: (progressEvent) => {
-            if (!setProgress) return
-            setProgress(0)
-            const progress = progressEvent.progress! * 100
-            setProgress(progress)
-          }
-        })
+        // Create an anchor tag and simulate a click to trigger the download
+        const anchor = document.createElement('a')
+        anchor.href = url
+        anchor.target = '_self'
+        anchor.download = name // Specify the desired file name
+        document.body.appendChild(anchor)
+        anchor.click()
+        document.body.removeChild(anchor)
 
-        const contentType = downloadFile.headers['content-type']
-        const downloadedUrl = window.URL.createObjectURL(
-          new Blob([downloadFile.data], { type: contentType })
-        )
-
-        const a = document.createElement('a')
-        a.href = downloadedUrl
-        a.download = name
-        document.body.appendChild(a)
-        a.click()
+        // Optionally, revoke the blob URL after the download starts
         window.URL.revokeObjectURL(url)
 
         return { success: true }

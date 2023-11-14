@@ -200,12 +200,18 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         })
 
         const url = window.URL.createObjectURL(new Blob([response.data]))
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${name}-${Date.now()}.zip`
-        document.body.appendChild(a)
-        a.click()
+        // Create an anchor tag and simulate a click to trigger the download
+        const anchor = document.createElement('a')
+        anchor.href = url
+        anchor.target = '_self'
+        anchor.download = `${name}-${Date.now()}.zip` // Specify the desired file name
+        document.body.appendChild(anchor)
+        anchor.click()
+        document.body.removeChild(anchor)
+
+        // Optionally, revoke the blob URL after the download starts
         window.URL.revokeObjectURL(url)
+
         return { success: true }
       } catch (error) {
         // if the reason behind the failure
