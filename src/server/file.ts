@@ -335,6 +335,7 @@ const FileOperations = (config: Config): FileOperationsInterface => {
     download: async ({ url, name, signal, setProgress }) => {
       try {
         const downloadFile = await axios.get(url, {
+          responseType: 'blob',
           signal,
           onDownloadProgress: (progressEvent) => {
             if (!setProgress) return
@@ -351,7 +352,7 @@ const FileOperations = (config: Config): FileOperationsInterface => {
 
         const a = document.createElement('a')
         a.href = downloadedUrl
-        a.download = `${name}.${contentType}`
+        a.download = name
         document.body.appendChild(a)
         a.click()
         window.URL.revokeObjectURL(url)
