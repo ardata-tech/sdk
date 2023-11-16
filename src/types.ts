@@ -110,3 +110,21 @@ export interface FilefilegoResponseData {
   status: string
   metadata: any
 }
+
+export enum RetrievalRequestStatus {
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED'
+}
+export interface RetrievalRequest {
+  id: string
+  dsn: string
+  userId: string
+  status: RetrievalRequestStatus
+  links: string[]
+  createdAt: Date
+  updatedAt: Date
+  fileId: string
+  file: {
+    cid: string
+  }
+}

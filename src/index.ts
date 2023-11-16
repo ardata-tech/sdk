@@ -1,77 +1,116 @@
-import { io, type Socket } from 'socket.io-client'
-import * as DirectoryOperations from './server/directory'
-import * as FileOperations from './server/file'
-import * as ListenerOperations from './server/listeners'
-import * as StorageOperations from './web-app/storage'
-import * as FileAccessOperations from './web-app/file-access'
-import * as SettingsOperations from './web-app/settings'
-import * as DriveOperations from './server/drive'
-
-export interface DeltaStorageConfig {
+import { Socket, io } from 'socket.io-client'
+import DirectoryOperations, {
+  DirectoryOperationsInterface
+} from './server/directory'
+import DriveOperations, { DriveOperationsInterface } from './server/drive'
+import FileOperations, { FileOperationsInterface } from './server/file'
+import ListenerOperations, {
+  ListenerOperationsInterface
+} from './server/listeners'
+import EdgeNodeOperations, {
+  EdgeNodeOperationsInterface
+} from './web-app/edge-nodes'
+import FileAccessOperations, {
+  FileAccessOperationsInterface
+} from './web-app/file-access'
+import SettingsOperations, {
+  SettingsOperationsInterface
+} from './web-app/settings'
+import StorageOperations, {
+  StorageOperationsInterface
+} from './web-app/storage'
+import RetrievalRequestOperations, {
+  RetrievalRequestOperationsInterface
+} from './server/retrievalRequest'
+import ExportOperation, { ExportOperationInterface } from './server/export'
+export interface InitConfig {
   apiKey: string
 }
 
-const myClassMethods = {
-  ...DirectoryOperations,
-  ...FileOperations,
-  ...StorageOperations,
-  ...ListenerOperations,
-  ...FileAccessOperations,
-  ...SettingsOperations,
-  ...DriveOperations
+export interface Config {
+  apiKey: string
+  scope: number
+  host: string
+  webAppHost: string
+  siaHost: string
+  userId: string
+  listener: Socket
 }
-class _DeltaStorageSDK {
-  public readonly apiKey: string
-  public readonly scope: number
-  public readonly host: string
-  public readonly webAppHost: string
-  public readonly listener: Socket
-  public readonly userId: string
-  public readonly siaHost: string
 
-  constructor(config: DeltaStorageConfig) {
-    const [_apiKeyId, scope, _userId, _hash] = config.apiKey.split('.')
-    this.apiKey = config.apiKey
-    this.userId = _userId
-    this.scope = parseInt(scope)
-    this.host = 'https://api.delta.storage'
-    this.webAppHost = 'https://app.delta.storage'
-    this.siaHost = 'https://sia-integration.delta.storage'
-    this.host = this.host.slice(-1) === '/' ? this.host.slice(0, -1) : this.host
-    this.webAppHost =
-      this.webAppHost.slice(-1) === '/'
-        ? this.webAppHost.slice(0, -1)
-        : this.webAppHost
+export interface DeltaStorageInit {
+  directory: DirectoryOperationsInterface
+  file: FileOperationsInterface
+  drive: DriveOperationsInterface
+  fileAccess: FileAccessOperationsInterface
+  settings: SettingsOperationsInterface
+  storage: StorageOperationsInterface
+  listener: ListenerOperationsInterface
+  edgeNodes: EdgeNodeOperationsInterface
+  retrievalRequest: RetrievalRequestOperationsInterface
+  export: (params: ExportOperationInterface) => void
+}
 
-    this.listener = io(this.host, {
+const DeltaStorage = {
+  init({ apiKey }: InitConfig): DeltaStorageInit {
+    const [, scope, _userId] = apiKey.split('.')
+    const host =
+      process.env.DELTA_STORAGE_SERVER_HOST ??
+      process.env.NEXT_PUBLIC_DELTA_STORAGE_SERVER_HOST ??
+      'https://api.delta.storage'
+    const webAppHost =
+      process.env.DELTA_STORAGE_WEB_APP_HOST ??
+      process.env.NEXT_PUBLIC_DELTA_STORAGE_WEB_APP_HOST ??
+      'https://app.delta.storage'
+    const siaHost =
+      process.env.DELTA_STORAGE_SIA_HOST ??
+      process.env.NEXT_PUBLIC_DELTA_STORAGE_SIA_HOST ??
+      'https://sia-integration.delta.storage'
+
+    const listener = io(host, {
       auth: {
-        token: config.apiKey
+        token: apiKey
       },
       autoConnect: false
     })
 
-    Object.assign(this, myClassMethods)
+    const config: Config = {
+      apiKey,
+      scope: parseInt(scope),
+      host,
+      webAppHost,
+      siaHost,
+      userId: _userId,
+      listener
+    }
+
+    return {
+      directory: DirectoryOperations(config),
+      file: FileOperations(config),
+      drive: DriveOperations(config),
+      fileAccess: FileAccessOperations(config),
+      settings: SettingsOperations(config),
+      storage: StorageOperations(config),
+      listener: ListenerOperations(config),
+      edgeNodes: EdgeNodeOperations(config),
+      retrievalRequest: RetrievalRequestOperations(config),
+      export: ({ id, signal, setProgress }) =>
+        ExportOperation(config)({ id, signal, setProgress })
+    }
   }
 }
 
-export type DeltaStorageSDK = InstanceType<typeof _DeltaStorageSDK> &
-  typeof myClassMethods
-
-export const DeltaStorageSDK = _DeltaStorageSDK as unknown as {
-  new (...args: ConstructorParameters<typeof _DeltaStorageSDK>): DeltaStorageSDK
-}
 export {
+  DSNProviders,
   Directory,
   File,
-  DSNProviders,
-  IPFSMetadata,
-  SiaMetadata,
   FilecoinResponseData,
   FilefilegoResponseData,
+  IPFSMetadata,
   IPFSResponseData,
-  SiaResponseData
+  SiaMetadata,
+  SiaResponseData,
+  RetrievalRequest,
+  RetrievalRequestStatus
 } from './types'
 
-export { edgeNodes } from './constants'
-
-export default DeltaStorageSDK
+export default DeltaStorage

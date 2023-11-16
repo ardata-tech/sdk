@@ -11,10 +11,3 @@ export enum OPERATION_SCOPE {
   CREATE_DIRECTORY = 0b0010_0000,
   DELETE_DIRECTORY = 0b0100_0000
 }
-
-export const edgeNodes = [
-  'https://edgeurid.estuary.tech',
-  'https://storage.web3ph.dev',
-  'https://delta.vulcaniclabs.com',
-  'https://edgeurid.chat3.one'
-]

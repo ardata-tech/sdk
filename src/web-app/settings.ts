@@ -1,59 +1,66 @@
 import axios from 'axios'
-import DeltaStorageSDK from '../index'
-
-export async function readSettings(this: DeltaStorageSDK): Promise<any> {
-  const result = await axios.get(`${this.webAppHost}/api/user/settings`, {
-    headers: {
-      Authorization: `Bearer ${this.apiKey}`
-    }
-  })
-
-  return result.data
-}
-
-export async function updateSettings(
-  this: DeltaStorageSDK,
-  body: {
+import { Config } from '..'
+export interface SettingsOperationsInterface {
+  read: () => Promise<any>
+  update: (params: {
     node?: string
     encryptionKey?: string
     isSecureMode?: boolean
-  }
-): Promise<any> {
-  const result = await axios.put(`${this.webAppHost}/api/user/settings`, body, {
-    headers: {
-      Authorization: `Bearer ${this.apiKey}`
-    }
-  })
-
-  return result.data
+  }) => Promise<any>
+  getEncryptionKey: () => Promise<any>
+  verifyEncryptionKey: (params: { encryptionKey: string }) => Promise<any>
 }
 
-// export async function readEncryptionKey(this: DeltaStorageSDK): Promise<any> {
-//   const result = await axios.get(
-//     `${this.webAppHost}/api/user/settings/encryption-key`,
-//     {
-//       headers: {
-//         Authorization: `Bearer ${this.apiKey}`
-//       }
-//     }
-//   )
-//
-//   return result.data
-// }
+const SettingsOperations = (config: Config): SettingsOperationsInterface => {
+  return {
+    read: async () => {
+      const result = await axios.get(`${config.webAppHost}/api/user/settings`, {
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`
+        }
+      })
 
-// export async function verifyEncryptionKey(
-//   this: DeltaStorageSDK,
-//   encryptionKey: string
-// ): Promise<any> {
-//   const result = await axios.post(
-//     `${this.webAppHost}/api/user/settings/encryption-key`,
-//     { encryptionKey },
-//     {
-//       headers: {
-//         Authorization: `Bearer ${this.apiKey}`
-//       }
-//     }
-//   )
-//
-//   return result.data
-// }
+      return result.data
+    },
+    update: async ({ node, encryptionKey, isSecureMode }) => {
+      const result = await axios.put(
+        `${config.webAppHost}/api/user/settings`,
+        { node, encryptionKey, isSecureMode },
+        {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        }
+      )
+
+      return result.data
+    },
+    getEncryptionKey: async () => {
+      const result = await axios.get(
+        `${config.webAppHost}/api/user/settings/encryption-key`,
+        {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        }
+      )
+
+      return result.data
+    },
+    verifyEncryptionKey: async ({ encryptionKey }) => {
+      const result = await axios.post(
+        `${config.webAppHost}/api/user/settings/encryption-key`,
+        { encryptionKey },
+        {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        }
+      )
+
+      return result.data
+    }
+  }
+}
+
+export default SettingsOperations

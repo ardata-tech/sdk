@@ -1,54 +1,53 @@
-import DeltaStorageSDK from '../index'
+import { Config } from '..'
 import { Directory, File } from '../types'
+import directoryOperations from './directory'
+import fileOperations from './file'
 
-export function connect(this: DeltaStorageSDK) {
-  this.listener.connect()
-}
-
-export function disconnect(this: DeltaStorageSDK) {
-  this.listener.disconnect()
-}
-
-export function disconnectReadDirectoryEvent(this: DeltaStorageSDK) {
-  this.listener.off('directory:change')
-}
-export async function onDirectoryChange(
-  this: DeltaStorageSDK,
-  callback: (data: any) => void
-) {
-  return this.listener.on('directory:change', callback)
+export interface ListenerOperationsInterface {
+  connect: () => void
+  disconnect: () => void
+  onTotalSizeChange: (params: { onChange: (data: any) => void }) => void
+  onReadDirectoryEvent: (params: {
+    id: string
+    onChange: (directory: { directories: Directory[]; files: File[] }) => void
+  }) => void
+  onReadDirectorySegmentChange: (params: {
+    segments: string
+    onChange: (data: any) => void
+  }) => void
 }
 
-export async function onTotalSizeChange(
-  this: DeltaStorageSDK,
-  callback: (data: any) => void
-) {
-  this.listener.emit('total-size:initialize')
-  this.listener.on('total-size:change', async () => {
-    const totalSize = await this.getTotalSize()
-    callback(totalSize)
-  })
+const ListenerOperations = (config: Config): ListenerOperationsInterface => {
+  const dirOps = directoryOperations(config)
+  const fileOps = fileOperations(config)
+  return {
+    connect: () => {
+      config.listener.connect()
+    },
+    disconnect: () => {
+      config.listener.disconnect()
+    },
+    onTotalSizeChange: ({ onChange }) => {
+      config.listener.emit('total-size:initialize')
+      config.listener.on('total-size:change', async () => {
+        const totalSize = await fileOps.getTotalSize()
+        onChange(totalSize)
+      })
+    },
+    onReadDirectoryEvent: async ({ id, onChange }) => {
+      config.listener.emit('directory:initialize')
+      config.listener.on('directory:change', async () => {
+        const latestDirectory = await dirOps.contents({ id })
+        onChange(latestDirectory)
+      })
+    },
+    onReadDirectorySegmentChange: ({ segments, onChange }) => {
+      config.listener.on('directory:change', async () => {
+        const res = await dirOps.getBySegment({ segments })
+        onChange(res)
+      })
+    }
+  }
 }
 
-export async function onReadDirectoryEvent(
-  this: DeltaStorageSDK,
-  id: string,
-  onChange: (directory: { directories: Directory[]; files: File[] }) => void
-) {
-  this.listener.emit('directory:initialize')
-  this.onDirectoryChange(async () => {
-    const latestDirectory = (await this.readDirectory(id)).data
-    onChange(latestDirectory)
-  })
-}
-
-export async function onReadDirectorySegmentChange(
-  this: DeltaStorageSDK,
-  segments: string,
-  onChange: (data: any) => void
-) {
-  this.onDirectoryChange(async () => {
-    const res = await this.readDirectoryBySegment(segments)
-    onChange(res.data)
-  })
-}
+export default ListenerOperations
