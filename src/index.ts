@@ -113,5 +113,4 @@ export {
   RetrievalRequestStatus
 } from './types'
 
-export { edgeNodes } from './constants'
 export default DeltaStorage

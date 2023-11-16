@@ -1,6 +1,6 @@
 import axios, { GenericAbortSignal } from 'axios'
 import { verifyAuthorizedCommand } from '../authorization'
-import { OPERATION_SCOPE, edgeNodes } from '../constants'
+import { OPERATION_SCOPE } from '../constants'
 import {
   File,
   IPFSMetadata,
@@ -210,6 +210,11 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.READ_FILE,
         'READ_FILE is not allowed.'
       )
+
+      const defaults = await axios.get(`${config.host}/edge-nodes`, {
+        headers: { Authorization: `Bearer ${config.apiKey}` }
+      })
+
       let replicationData: {
         IPFS: IPFSResponseData
         Sia: SiaResponseData
@@ -217,7 +222,7 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         Filefilego: any
       } = {
         IPFS: {
-          links: edgeNodes.map((node) => node + '/gw/'),
+          links: defaults.data.edgeNodes.map((node: string) => node + '/gw/'),
           status: 'Replicated',
           metadata: null
         },

@@ -45,7 +45,7 @@ const ExportOperation =
       // Create an anchor tag and simulate a click to trigger the download
       const anchor = document.createElement('a')
       anchor.href = url
-    anchor.target = '_self'
+      anchor.target = '_self'
       anchor.download = `Delta-${id}.zip` // Specify the desired file name
       document.body.appendChild(anchor)
       anchor.click()
