@@ -125,6 +125,7 @@ const FileOperations = (config: Config): FileOperationsInterface => {
           if (axios.isCancel(e)) {
             console.error('Uploading canceled')
           } else {
+            return e.response
             // handle HTTP error...
           }
         })
