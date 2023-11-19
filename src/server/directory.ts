@@ -213,12 +213,13 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         window.URL.revokeObjectURL(url)
 
         return { success: true }
-      } catch (error) {
+      } catch (error: any) {
         // if the reason behind the failure
         // is a cancellation
         if (axios.isCancel(error)) {
           console.error('Downloading canceled')
         } else {
+          return error.response
           // handle HTTP error...
         }
 

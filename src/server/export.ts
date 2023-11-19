@@ -55,13 +55,14 @@ const ExportOperation =
       window.URL.revokeObjectURL(url)
 
       return { success: true }
-    } catch (error) {
+    } catch (error: any) {
       // if the reason behind the failure
       // is a cancellation
       if (axios.isCancel(error)) {
         console.error('Downloading canceled')
       } else {
         console.log(error)
+        return error.response
         // handle HTTP error...
       }
     }
