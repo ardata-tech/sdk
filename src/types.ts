@@ -11,7 +11,6 @@ export interface Directory {
   updatedAt: Date
   storageClassName: StorageClassName
   driveId: string | null
-  parentDirectory: string | null
 }
 
 export interface File {
@@ -128,3 +127,13 @@ export interface RetrievalRequest {
     cid: string
   }
 }
+
+export interface DataResponse {
+  success: boolean
+  code: number
+  message: string
+}
+
+export type DataResponsePromise<T = any> = Promise<
+  [(DataResponse & T) | null, error: DataResponse | null]
+>

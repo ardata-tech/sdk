@@ -54,9 +54,11 @@ const DeltaStorage = {
   init({ apiKey }: InitConfig): DeltaStorageInit {
     const [, scope, _userId] = apiKey.split('.')
     const host =
-      process.env.DELTA_STORAGE_SERVER_HOST ??
-      process.env.NEXT_PUBLIC_DELTA_STORAGE_SERVER_HOST ??
-      'https://api.delta.storage'
+      process.env.NODE_ENV === 'test'
+        ? 'http://localhost:1337'
+        : process.env.DELTA_STORAGE_SERVER_HOST ??
+          process.env.NEXT_PUBLIC_DELTA_STORAGE_SERVER_HOST ??
+          'https://api.delta.storage'
     const webAppHost =
       process.env.DELTA_STORAGE_WEB_APP_HOST ??
       process.env.NEXT_PUBLIC_DELTA_STORAGE_WEB_APP_HOST ??
