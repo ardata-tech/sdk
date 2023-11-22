@@ -22,8 +22,9 @@ let subDirectoryId: string
 describe('===== Directory test =====', () => {
   beforeAll(async () => {
     sdk = DeltaStorage.init({ apiKey: API_KEY })
-    const drive = await sdk.drive.create({ name: 'Testing Drive' })
-    driveId = drive.id
+
+    const [drive] = await sdk.drive.create({ name: 'Testing Drive' })
+    driveId = drive?.id ?? ''
   })
 
   describe('» Create a Directory', () => {
