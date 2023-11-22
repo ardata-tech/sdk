@@ -72,6 +72,31 @@ describe('===== Directory test =====', () => {
     })
   })
 
+  describe('» Directory Size', () => {
+    it('should get the directory size', async () => {
+      const [data, error] = await sdk.directory.getTotalSize({
+        id: driveId
+      })
+
+      expect(error).toBeNull()
+      expect(data).not.toBeNull()
+      expect(data?.success).toBeTruthy()
+      expect(data?.code).toStrictEqual(200)
+      expect(data?.totalSize).toBeNumber()
+    })
+
+    it('should return error if no directory found', async () => {
+      const [data, error] = await sdk.directory.getTotalSize({
+        id: crypto.randomUUID()
+      })
+
+      expect(data).toBeNull()
+      expect(error).not.toBeNull()
+      expect(error?.success).toBeFalsy()
+      expect(error?.code).toStrictEqual(404)
+    })
+  })
+
   describe('» Directory Content', () => {
     it('should get the directory content', async () => {
       const [data, error] = await sdk.directory.contents({
