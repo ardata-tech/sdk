@@ -53,7 +53,7 @@ export interface DirectoryOperationsInterface {
     deletedFolders: string[]
     deletedFiles: string[]
   }>
-  getTotalSize: (params: { id: string }) => DataResponsePromise<bigint>
+  getTotalSize: (params: { id: string }) => DataResponsePromise<{totalSize: bigint}>
   download: (params: {
     id: string
     name: string
@@ -229,7 +229,7 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
           }
         })
 
-        return [result.data.totalSize, null]
+        return [result.data, null]
       } catch (error: any) {
         return [null, error.response.data]
       }
