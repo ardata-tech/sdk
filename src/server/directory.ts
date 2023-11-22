@@ -53,7 +53,9 @@ export interface DirectoryOperationsInterface {
     deletedFolders: string[]
     deletedFiles: string[]
   }>
-  getTotalSize: (params: { id: string }) => DataResponsePromise<{totalSize: bigint}>
+  getTotalSize: (params: {
+    id: string
+  }) => DataResponsePromise<{ totalSize: bigint }>
   download: (params: {
     id: string
     name: string
