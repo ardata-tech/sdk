@@ -23,10 +23,12 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: Lint
-        run: yarn lint
+        run: yarn lint --fix
 
-      # - name: Test
-      #   run: yarn test --ci --coverage --maxWorkers=2
-
+      - name: Test
+        run: yarn test -u --ci --coverage --maxWorkers=2
+        env:
+          API_KEY: '1d6c5c07-fdeb-4c86-b6b6-56b88eaa67dc.0.de986a66-4ddc-4b6e-b353-6b2e3381d46b.kmJPPMMSo5ELMDpCWKaX2it5k55qVn7QM6iwWZ5NBwN'
+          TEST_DELTA_STORAGE_SERVER_HOST: https://staging-api.delta.storage
       - name: Build
         run: yarn build

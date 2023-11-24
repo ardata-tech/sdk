@@ -1,14 +1,18 @@
 import DeltaStorage, { DeltaStorageInit } from '../src'
-
 import crypto from 'crypto'
-
+import dotenv from 'dotenv'
 import * as matchers from 'jest-extended'
+dotenv.config()
 expect.extend(matchers)
 
-// NOTE: Replace this with your own API_KEY
 // TODO: Create a test account for each env
-const API_KEY =
-  '00000000-0000-0000-0000-000000000000.0.162eeecd-aac1-4a4d-89fd-97dc597f8f1e.7AQjso3c8ENenysfybUieZd3m3mBp2ZtDtpUBHMosPWn'
+const API_KEY = process.env.API_KEY ?? ''
+
+if (!API_KEY) {
+  throw new Error(
+    'API_KEY is not defined. Make sure to set it in your .env file.'
+  )
+}
 
 let sdk: DeltaStorageInit
 let driveId: string
@@ -19,8 +23,8 @@ describe('===== Directory test =====', () => {
   beforeAll(async () => {
     sdk = DeltaStorage.init({ apiKey: API_KEY })
 
-    const drive = await sdk.drive.create({ name: 'Testing Drive' })
-    driveId = drive.id
+    const [drive] = await sdk.drive.create({ name: 'Testing Drive' })
+    driveId = drive?.id ?? ''
   })
 
   describe('» Create a Directory', () => {

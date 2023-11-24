@@ -2,12 +2,7 @@ import axios, { GenericAbortSignal } from 'axios'
 import { verifyAuthorizedCommand } from '../authorization'
 import { OPERATION_SCOPE } from '../constants'
 import { Config } from '..'
-import {
-  DataResponsePromise,
-  Directory,
-  File,
-  StorageClassName
-} from '../types'
+import { DataResponsePromise, Directory, File } from '../types'
 
 export interface DirectoryOperationsInterface {
   contents: (params: {
@@ -21,34 +16,21 @@ export interface DirectoryOperationsInterface {
     name: string
     parentDirectoryId?: string
     storageClass?: string
-  }) => DataResponsePromise<{
+  }) => DataResponsePromise<Pick<Directory, 'id' | 'name' | 'storageClassName'>>
+  rename: (params: {
     id: string
     name: string
-    storageClassName: null | StorageClassName
-  }>
-  rename: (params: { id: string; name: string }) => DataResponsePromise<{
-    id: string
-    name: string
-    storageClassName: null | StorageClassName
-  }>
+  }) => DataResponsePromise<Pick<Directory, 'id' | 'name' | 'storageClassName'>>
   update: (params: {
     id: string
     name: string
     storageClass?: string
-  }) => DataResponsePromise<{
-    id: string
-    name: string
-    storageClassName: null | StorageClassName
-  }>
+  }) => DataResponsePromise<Pick<Directory, 'id' | 'name' | 'storageClassName'>>
   move: (params: {
     id: string
     directoryIdsToMove: string[]
     fileIdsToMove?: string[]
-  }) => DataResponsePromise<{
-    id: string
-    name: string
-    storageClassName: null | StorageClassName
-  }>
+  }) => DataResponsePromise<Pick<Directory, 'id' | 'name' | 'storageClassName'>>
   delete: (params: { id: string }) => DataResponsePromise<{
     deletedFolders: string[]
     deletedFiles: string[]
