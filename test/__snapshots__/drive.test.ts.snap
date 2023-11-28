@@ -13,28 +13,6 @@ exports[`===== Drive test ===== » Get All Drives should get all drives 1`] = `
     "storageClassName": toBeOneOf<Any,>,
     "updatedAt": Any<String>,
   },
-  {
-    "createdAt": Any<String>,
-    "driveId": null,
-    "id": Any<String>,
-    "name": Any<String>,
-    "ownerId": Any<String>,
-    "parentDirectoryId": null,
-    "softDeleted": Any<Boolean>,
-    "storageClassName": toBeOneOf<Any,>,
-    "updatedAt": Any<String>,
-  },
-  {
-    "createdAt": Any<String>,
-    "driveId": null,
-    "id": Any<String>,
-    "name": Any<String>,
-    "ownerId": Any<String>,
-    "parentDirectoryId": null,
-    "softDeleted": Any<Boolean>,
-    "storageClassName": toBeOneOf<Any,>,
-    "updatedAt": Any<String>,
-  },
 ]
 `;
 
