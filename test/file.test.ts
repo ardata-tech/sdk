@@ -31,8 +31,8 @@ describe('===== Drive test =====', () => {
     const blob = new Blob([fileContent], { type: 'text/plain' })
     file = new File([blob], 'testing.txt', { type: 'text/plain' })
 
-    const [driveData, _driveError] = await sdk.drive.getAll()
-    const [data, _error] = await sdk.directory.create({
+    const [driveData] = await sdk.drive.getAll()
+    const [data] = await sdk.directory.create({
       parentDirectoryId: driveData?.drives[0].id ?? '',
       name: 'Testing Directory'
     })
@@ -249,7 +249,7 @@ describe('===== Drive test =====', () => {
 
   describe('File Replication', () => {
     it('should get file replication', async () => {
-      const [data, error] = await sdk.file.getReplications({ cid })
+      const [data] = await sdk.file.getReplications({ cid })
 
       const replicationItemMatcher = {
         IPFS: {
