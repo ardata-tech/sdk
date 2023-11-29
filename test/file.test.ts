@@ -29,7 +29,7 @@ describe('===== Drive test =====', () => {
     sdk = DeltaStorage.init({ apiKey: API_KEY })
     let fileContent = await fs.readFile(path)
     const blob = new Blob([fileContent], { type: 'text/plain' })
-    file = new File([blob], 'testing.txt', { type: 'text/plain' })
+    file = new global.File([blob], 'testing.txt', { type: 'text/plain' })
 
     const [driveData] = await sdk.drive.getAll()
     const [data] = await sdk.directory.create({
