@@ -5,7 +5,10 @@ import { OPERATION_SCOPE } from '../constants'
 import { DataResponsePromise, RetrievalRequest } from '../types'
 
 export interface RetrievalRequestOperationsInterface {
-  create: (params: { dsn: string; fileId: string }) => DataResponsePromise
+  create: (params: {
+    dsn: string
+    fileId: string
+  }) => DataResponsePromise<RetrievalRequest>
   details: (params: {
     dsn: string
     fileId: string
