@@ -14,7 +14,7 @@ export interface DirectoryOperationsInterface {
   }>
   create: (params: {
     name: string
-    parentDirectoryId?: string
+    parentDirectoryId: string
     storageClass?: string
   }) => DataResponsePromise<Pick<Directory, 'id' | 'name' | 'storageClassName'>>
   rename: (params: {
