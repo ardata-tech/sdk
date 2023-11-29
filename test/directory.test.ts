@@ -38,7 +38,7 @@ describe('===== Directory test =====', () => {
       expect(error).toBeNull()
       expect(directory).not.toBeNull()
       expect(directory?.success).toBeTruthy()
-      expect(directory?.code).toStrictEqual(200)
+      expect(directory?.code).toStrictEqual(201)
       expect(directory?.name).toStrictEqual(name)
 
       directoryId = directory?.id ?? ''
@@ -56,7 +56,7 @@ describe('===== Directory test =====', () => {
       expect(error).toBeNull()
       expect(directory).not.toBeNull()
       expect(directory?.success).toBeTruthy()
-      expect(directory?.code).toStrictEqual(200)
+      expect(directory?.code).toStrictEqual(201)
       expect(directory?.name).toStrictEqual(name)
 
       subDirectoryId = directory?.id ?? ''
