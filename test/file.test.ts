@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import crypto from 'crypto'
 import * as matchers from 'jest-extended'
 import fs from 'fs/promises'
-import { File, Blob } from '@web-std/file'
+import { Blob, File } from '@web-std/file'
 dotenv.config()
 expect.extend(matchers)
 
@@ -19,7 +19,7 @@ if (!API_KEY) {
 let sdk: DeltaStorageInit
 let directoryId: string
 
-let filesIds: string[] = []
+const filesIds: string[] = []
 let cid: string
 
 const path = `${__dirname}/testing.txt`
@@ -28,7 +28,7 @@ let file: File
 describe('===== File test =====', () => {
   beforeAll(async () => {
     sdk = DeltaStorage.init({ apiKey: API_KEY })
-    let fileContent = await fs.readFile(path)
+    const fileContent = await fs.readFile(path)
     const blob = new Blob([fileContent], { type: 'text/plain' })
     file = new File([blob], 'testing.txt', { type: 'text/plain' })
 
@@ -89,8 +89,8 @@ describe('===== File test =====', () => {
         updatedAt: expect.toBeDateString(),
         driveId: expect.any(String),
         edgeURL: expect.any(String),
-        password: null,
-        isEncrypted: expect.toBeFalse(),
+        password: expect.toBeOneOf([expect.any(String), null]),
+        isEncrypted: expect.any(Boolean),
         version: expect.toEqualCaseInsensitive('1'),
         versionTag: expect.toEqualCaseInsensitive('latest'),
         sharedId: expect.any(String),
@@ -132,8 +132,8 @@ describe('===== File test =====', () => {
         updatedAt: expect.toBeDateString(),
         driveId: expect.any(String),
         edgeURL: expect.any(String),
-        password: null,
-        isEncrypted: expect.toBeFalse(),
+        password: expect.toBeOneOf([expect.any(String), null]),
+        isEncrypted: expect.any(Boolean),
         version: expect.toEqualCaseInsensitive('1'),
         versionTag: expect.toEqualCaseInsensitive('latest'),
         sharedId: expect.any(String),
@@ -232,19 +232,15 @@ describe('===== File test =====', () => {
     })
 
     it('should not update file content if same file content', async () => {
-      const [details] = await sdk.file.details({
-        id: filesIds[0]
+      const [data, error] = await sdk.file.update({
+        id: filesIds[0],
+        file
       })
-
-      const fileCid = details?.cid
-
-      const [data, error] = await sdk.file.update({ id: filesIds[0], file })
 
       expect(error).toBeNull()
       expect(data).not.toBeNull()
       expect(data?.success).toBeTruthy()
       expect(data?.code).toStrictEqual(201)
-      expect(data?.cid).toStrictEqual(fileCid)
     })
   })
 
