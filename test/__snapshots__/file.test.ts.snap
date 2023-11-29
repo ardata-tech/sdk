@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`===== Drive test ===== File Replication should get file replication 1`] = `
+exports[`===== File test ===== File Replication should get file replication 1`] = `
 {
   "Filecoin": {
     "links": toBeArray<>,
@@ -25,7 +25,7 @@ exports[`===== Drive test ===== File Replication should get file replication 1`]
 }
 `;
 
-exports[`===== Drive test ===== List of Files should get a list of files 1`] = `
+exports[`===== File test ===== List of Files should get a list of files 1`] = `
 [
   {
     "cid": Any<String>,
@@ -186,14 +186,14 @@ exports[`===== Drive test ===== List of Files should get a list of files 1`] = `
 ]
 `;
 
-exports[`===== Drive test ===== » Upload a File should bulk upload file 1`] = `
+exports[`===== File test ===== » Upload a File should bulk upload file 1`] = `
 [
   {
     "cid": Any<String>,
     "code": toEqualCaseInsensitive<201>,
     "contentType": Any<String>,
     "createdAt": toBeDateString<>,
-    "directoryId": toEqualCaseInsensitive<450c6416-76c1-44b5-bcee-6db5577dceb1>,
+    "directoryId": toEqualCaseInsensitive<6f14bfac-9054-469c-b6ee-4259fff6f6d3>,
     "driveId": Any<String>,
     "edgeURL": Any<String>,
     "id": Any<String>,
@@ -221,7 +221,7 @@ exports[`===== Drive test ===== » Upload a File should bulk upload file 1`] = `
     "code": toEqualCaseInsensitive<201>,
     "contentType": Any<String>,
     "createdAt": toBeDateString<>,
-    "directoryId": toEqualCaseInsensitive<450c6416-76c1-44b5-bcee-6db5577dceb1>,
+    "directoryId": toEqualCaseInsensitive<6f14bfac-9054-469c-b6ee-4259fff6f6d3>,
     "driveId": Any<String>,
     "edgeURL": Any<String>,
     "id": Any<String>,
@@ -249,7 +249,7 @@ exports[`===== Drive test ===== » Upload a File should bulk upload file 1`] = `
     "code": toEqualCaseInsensitive<201>,
     "contentType": Any<String>,
     "createdAt": toBeDateString<>,
-    "directoryId": toEqualCaseInsensitive<450c6416-76c1-44b5-bcee-6db5577dceb1>,
+    "directoryId": toEqualCaseInsensitive<6f14bfac-9054-469c-b6ee-4259fff6f6d3>,
     "driveId": Any<String>,
     "edgeURL": Any<String>,
     "id": Any<String>,
@@ -277,7 +277,7 @@ exports[`===== Drive test ===== » Upload a File should bulk upload file 1`] = `
     "code": toEqualCaseInsensitive<201>,
     "contentType": Any<String>,
     "createdAt": toBeDateString<>,
-    "directoryId": toEqualCaseInsensitive<450c6416-76c1-44b5-bcee-6db5577dceb1>,
+    "directoryId": toEqualCaseInsensitive<6f14bfac-9054-469c-b6ee-4259fff6f6d3>,
     "driveId": Any<String>,
     "edgeURL": Any<String>,
     "id": Any<String>,

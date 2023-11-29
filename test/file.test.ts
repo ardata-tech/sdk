@@ -25,7 +25,7 @@ let cid: string
 const path = `${__dirname}/testing.txt`
 let file: File
 
-describe('===== Drive test =====', () => {
+describe('===== File test =====', () => {
   beforeAll(async () => {
     sdk = DeltaStorage.init({ apiKey: API_KEY })
     let fileContent = await fs.readFile(path)
