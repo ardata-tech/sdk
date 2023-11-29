@@ -2,14 +2,14 @@ import axios from 'axios'
 import { Config } from '..'
 import { verifyAuthorizedCommand } from '../authorization'
 import { OPERATION_SCOPE } from '../constants'
-import { RetrievalRequest } from '../types'
+import { DataResponsePromise, RetrievalRequest } from '../types'
 
 export interface RetrievalRequestOperationsInterface {
-  create: (params: { dsn: string; fileId: string }) => Promise<any>
+  create: (params: { dsn: string; fileId: string }) => DataResponsePromise
   details: (params: {
     dsn: string
     fileId: string
-  }) => Promise<RetrievalRequest>
+  }) => DataResponsePromise<RetrievalRequest>
 }
 
 const RetrievalRequestOperations = (
@@ -22,16 +22,21 @@ const RetrievalRequestOperations = (
         OPERATION_SCOPE.READ_DIRECTORY,
         'RETRIEVAL_REQUESTS is not allowed.'
       )
-      const res = await axios.post(
-        `${config.host}/retrieval-requests/create`,
-        { dsn, fileId },
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
+
+      try {
+        const res = await axios.post(
+          `${config.host}/retrieval-requests/create`,
+          { dsn, fileId },
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           }
-        }
-      )
-      return res.data
+        )
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     details: async ({ dsn, fileId }) => {
       verifyAuthorizedCommand(
@@ -39,15 +44,20 @@ const RetrievalRequestOperations = (
         OPERATION_SCOPE.READ_DIRECTORY,
         'RETRIEVAL_REQUESTS is not allowed.'
       )
-      const res = await axios.get(
-        `${config.host}/retrieval-requests/${dsn}/${fileId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
+
+      try {
+        const res = await axios.get(
+          `${config.host}/retrieval-requests/${dsn}/${fileId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           }
-        }
-      )
-      return res.data
+        )
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     }
   }
 }
