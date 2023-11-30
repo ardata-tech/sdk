@@ -133,7 +133,7 @@ export interface RetrievalRequest {
 export interface DataResponse {
   success: boolean
   code: number
-  message: string
+  message?: string
 }
 
 export type DataResponsePromise<T = {}> = Promise<
