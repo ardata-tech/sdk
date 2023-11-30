@@ -21,6 +21,11 @@ export interface FileOperationsInterface {
     setProgress?: (progress: number) => void
     signal?: GenericAbortSignal | undefined
   }) => DataResponsePromise<File>
+  directEdgeUpload: (params: {
+    file: any
+    setProgress?: (progress: number) => void
+    signal?: GenericAbortSignal | undefined
+  }) => Promise<any>
   bulkUpload: (params: {
     files: { file: any; directoryId: string; storageClasses?: string[] }[]
   }) => Promise<[Array<DataResponse & File> | null, error: DataResponse | null]>
@@ -155,6 +160,40 @@ const FileOperations = (config: Config): FileOperationsInterface => {
           // handle HTTP error...
         }
       }
+    },
+    directEdgeUpload: async ({ file, setProgress, signal }) => {
+      verifyAuthorizedCommand(
+        config.scope,
+        OPERATION_SCOPE.UPLOAD_FILE,
+        'UPLOAD_FILE is not allowed.'
+      )
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await axios
+        .post(`${config.host}/files/direct-edge-upload`, formData, {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          },
+          signal,
+          onUploadProgress: (progressEvent) => {
+            if (!setProgress) return
+            setProgress(0)
+            const progress = progressEvent.progress! * 100
+            setProgress(progress)
+          }
+        })
+        .catch(function (e) {
+          // if the reason behind the failure
+          // is a cancellation
+          if (axios.isCancel(e)) {
+            console.error('Uploading canceled')
+          } else {
+            return e.response
+            // handle HTTP error...
+          }
+        })
+
+      if (res) return res.data
     },
     bulkUpload: async ({ files }) => {
       verifyAuthorizedCommand(
