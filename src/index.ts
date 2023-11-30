@@ -66,9 +66,11 @@ const DeltaStorage = {
           process.env.NEXT_PUBLIC_DELTA_STORAGE_SERVER_HOST ??
           'https://api.delta.storage'
     const webAppHost =
-      process.env.DELTA_STORAGE_WEB_APP_HOST ??
-      process.env.NEXT_PUBLIC_DELTA_STORAGE_WEB_APP_HOST ??
-      'https://app.delta.storage'
+      NODE_ENV === 'test'
+        ? process.env.TEST_DELTA_STORAGE_WEB_HOST || ''
+        : process.env.DELTA_STORAGE_WEB_APP_HOST ??
+          process.env.NEXT_PUBLIC_DELTA_STORAGE_WEB_APP_HOST ??
+          'https://app.delta.storage'
     const siaHost =
       process.env.DELTA_STORAGE_SIA_HOST ??
       process.env.NEXT_PUBLIC_DELTA_STORAGE_SIA_HOST ??
