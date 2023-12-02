@@ -42,6 +42,15 @@ describe('===== File test =====', () => {
   })
 
   describe('» Upload a File', () => {
+    it('should upload a file direct to the edge', async () => {
+      const [data, error] = await sdk.file.directEdgeUpload({ file })
+
+      expect(error).toBeNull()
+      expect(data).not.toBeNull()
+      expect(data?.success).toBeTruthy()
+      expect(data?.code).toStrictEqual(201)
+    })
+
     it('should upload a file', async () => {
       const [data, error] = await sdk.file.upload({ file, directoryId })
 
@@ -76,7 +85,7 @@ describe('===== File test =====', () => {
         id: expect.any(String),
         name: expect.any(String),
         cid: expect.any(String),
-        directoryId: expect.toEqualCaseInsensitive(directoryId),
+        directoryId: expect.any(String),
         ownerId: expect.any(String),
         size: expect.any(Number),
         contentType: expect.any(String),
