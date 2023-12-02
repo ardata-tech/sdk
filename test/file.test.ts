@@ -42,6 +42,15 @@ describe('===== File test =====', () => {
   })
 
   describe('» Upload a File', () => {
+    it('should upload a file direct to the edge', async () => {
+      const [data, error] = await sdk.file.directEdgeUpload({ file })
+
+      expect(error).toBeNull()
+      expect(data).not.toBeNull()
+      expect(data?.success).toBeTruthy()
+      expect(data?.code).toStrictEqual(201)
+    })
+
     it('should upload a file', async () => {
       const [data, error] = await sdk.file.upload({ file, directoryId })
 
