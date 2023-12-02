@@ -136,6 +136,6 @@ export interface DataResponse {
   message?: string
 }
 
-export type DataResponsePromise<T = {}> = Promise<
-  [(DataResponse & T) | null, error: DataResponse | null]
+export type DataResponsePromise<T = {}, E = {}> = Promise<
+  [(DataResponse & T) | null, error: (DataResponse & E) | null]
 >
