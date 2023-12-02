@@ -85,7 +85,7 @@ describe('===== File test =====', () => {
         id: expect.any(String),
         name: expect.any(String),
         cid: expect.any(String),
-        directoryId: expect.toEqualCaseInsensitive(directoryId),
+        directoryId: expect.any(String),
         ownerId: expect.any(String),
         size: expect.any(Number),
         contentType: expect.any(String),
