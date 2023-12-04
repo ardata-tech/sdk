@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`===== Settings test ===== Read Settings should read settings data 1`] = `
-{
-  "customEdgeNodes": toBeArray<>,
-  "isSecureMode": Any<Boolean>,
-  "node": toBeOneOf<Any,>,
-}
-`;
