@@ -1,64 +1,55 @@
 import axios from 'axios'
 import { Config } from '..'
+import { DataResponsePromise } from '../types'
+
+interface SettingsResponse {
+  node: string | null
+  isSecureMode: boolean
+  customEdgeNodes: string[]
+}
+
 export interface SettingsOperationsInterface {
-  read: () => Promise<any>
+  read: () => DataResponsePromise<{ settings: SettingsResponse }>
   update: (params: {
-    node?: string
-    encryptionKey?: string
+    node?: string | null
     isSecureMode?: boolean
-  }) => Promise<any>
-  getEncryptionKey: () => Promise<any>
-  verifyEncryptionKey: (params: { encryptionKey: string }) => Promise<any>
+  }) => DataResponsePromise
 }
 
 const SettingsOperations = (config: Config): SettingsOperationsInterface => {
   return {
     read: async () => {
-      const result = await axios.get(`${config.webAppHost}/api/user/settings`, {
-        headers: {
-          Authorization: `Bearer ${config.apiKey}`
-        }
-      })
-
-      return result.data
-    },
-    update: async ({ node, encryptionKey, isSecureMode }) => {
-      const result = await axios.put(
-        `${config.webAppHost}/api/user/settings`,
-        { node, encryptionKey, isSecureMode },
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
+      try {
+        const result = await axios.get(
+          `${config.webAppHost}/api/user/settings`,
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           }
-        }
-      )
+        )
 
-      return result.data
+        return [result.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
-    getEncryptionKey: async () => {
-      const result = await axios.get(
-        `${config.webAppHost}/api/user/settings/encryption-key`,
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
+    update: async ({ node, isSecureMode }) => {
+      try {
+        const result = await axios.put(
+          `${config.webAppHost}/api/user/settings`,
+          { node, isSecureMode },
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           }
-        }
-      )
+        )
 
-      return result.data
-    },
-    verifyEncryptionKey: async ({ encryptionKey }) => {
-      const result = await axios.post(
-        `${config.webAppHost}/api/user/settings/encryption-key`,
-        { encryptionKey },
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
-          }
-        }
-      )
-
-      return result.data
+        return [result.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     }
   }
 }
