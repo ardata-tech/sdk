@@ -20,6 +20,11 @@ export interface FileOperationsInterface {
     setProgress?: (progress: number) => void
     signal?: GenericAbortSignal | undefined
   }) => Promise<any>
+  directEdgeUpload: (params: {
+    file: any
+    setProgress?: (progress: number) => void
+    signal?: GenericAbortSignal | undefined
+  }) => Promise<any>
   bulkUpload: (params: {
     files: { file: any; directoryId: string; storageClasses?: string[] }[]
   }) => Promise<any>
@@ -28,8 +33,11 @@ export interface FileOperationsInterface {
   update: (params: {
     id: string
     name?: string
+    file?: any
     addStorageClasses?: string[]
     removeStorageClasses?: string[]
+    setProgress?: (progress: number) => void
+    signal?: GenericAbortSignal | undefined
   }) => Promise<any>
   getReplications: (params: { cid: string }) => Promise<
     | {
@@ -125,6 +133,41 @@ const FileOperations = (config: Config): FileOperationsInterface => {
           if (axios.isCancel(e)) {
             console.error('Uploading canceled')
           } else {
+            return e.response
+            // handle HTTP error...
+          }
+        })
+
+      if (res) return res.data
+    },
+    directEdgeUpload: async ({ file, setProgress, signal }) => {
+      verifyAuthorizedCommand(
+        config.scope,
+        OPERATION_SCOPE.UPLOAD_FILE,
+        'UPLOAD_FILE is not allowed.'
+      )
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await axios
+        .post(`${config.host}/files/direct-edge-upload`, formData, {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          },
+          signal,
+          onUploadProgress: (progressEvent) => {
+            if (!setProgress) return
+            setProgress(0)
+            const progress = progressEvent.progress! * 100
+            setProgress(progress)
+          }
+        })
+        .catch(function (e) {
+          // if the reason behind the failure
+          // is a cancellation
+          if (axios.isCancel(e)) {
+            console.error('Uploading canceled')
+          } else {
+            return e.response
             // handle HTTP error...
           }
         })
@@ -187,22 +230,59 @@ const FileOperations = (config: Config): FileOperationsInterface => {
       )
       return res.data
     },
-    update: async ({ id, name, addStorageClasses, removeStorageClasses }) => {
+    update: async ({
+      id,
+      name,
+      addStorageClasses,
+      removeStorageClasses,
+      file,
+      setProgress,
+      signal
+    }) => {
       verifyAuthorizedCommand(
         config.scope,
         OPERATION_SCOPE.UPLOAD_FILE | OPERATION_SCOPE.DELETE_FILE,
         'UPDATE_FILE is not allowed.'
       )
-      const res = await axios.put(
-        `${config.host}/files/${id}`,
-        { name, addStorageClasses, removeStorageClasses },
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
+      if (file !== undefined) {
+        const formData = new FormData()
+        formData.append('file', file)
+        const res = await axios
+          .put(`${config.host}/files/${id}/update-file-content`, formData, {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            },
+            signal,
+            onUploadProgress: (progressEvent) => {
+              if (!setProgress) return
+              setProgress(0)
+              const progress = progressEvent.progress! * 100
+              setProgress(progress)
+            }
+          })
+          .catch(function (e) {
+            // if the reason behind the failure
+            // is a cancellation
+            if (axios.isCancel(e)) {
+              console.error('Uploading canceled')
+            } else {
+              return e.response
+              // handle HTTP error...
+            }
+          })
+        if (res) return res.data
+      } else {
+        const res = await axios.put(
+          `${config.host}/files/${id}`,
+          { name, addStorageClasses, removeStorageClasses },
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           }
-        }
-      )
-      return res.data
+        )
+        return res.data
+      }
     },
     getReplications: async ({ cid }) => {
       verifyAuthorizedCommand(
