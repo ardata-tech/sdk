@@ -35,9 +35,6 @@
     "endOfLine": "auto"
   },
   "jest": {
-    "setupFilesAfterEnv": [
-      "jest-extended/all"
-    ],
     "preset": "ts-jest",
     "testEnvironment": "node"
   },
@@ -60,10 +57,9 @@
     "@types/jest": "^29.5.3",
     "@web-std/file": "^3.0.3",
     "bufferutil": "^4.0.7",
-    "dotenv": "^16.4.1",
+    "dotenv": "^16.3.1",
     "dts-cli": "^2.0.3",
     "husky": "^8.0.3",
-    "jest-extended": "^4.0.2",
     "size-limit": "^8.2.6",
     "ts-jest": "^29.1.1",
     "tslib": "^2.6.1",
