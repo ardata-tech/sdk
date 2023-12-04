@@ -2,21 +2,9 @@ import axios from 'axios'
 import { verifyAuthorizedCommand } from '../authorization'
 import { OPERATION_SCOPE } from '../constants'
 import { Config } from '..'
-import { DataResponsePromise } from '../types'
 
 export interface StorageOperationsInterface {
-  read: () => DataResponsePromise<{
-    storage: {
-      name: string
-      userId: string
-      id: string
-      capacity: bigint
-      customCapacity: bigint | null
-      createdAt: Date
-      updatedAt: Date
-    } | null
-    quantity: number
-  }>
+  read: () => Promise<any>
 }
 
 const StorageOperations = (config: Config): StorageOperationsInterface => {
@@ -27,19 +15,13 @@ const StorageOperations = (config: Config): StorageOperationsInterface => {
         OPERATION_SCOPE.READ_DIRECTORY,
         'READ_DIRECTORY is not allowed.'
       )
+      const result = await axios.get(`${config.webAppHost}/api/storage`, {
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`
+        }
+      })
 
-      try {
-        const result = await axios.get(`${config.webAppHost}/api/storage`, {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
-          }
-        })
-
-        return [result.data, null]
-      } catch (error: any) {
-        console.error(error)
-        return [null, error.response.data]
-      }
+      return result.data
     }
   }
 }
