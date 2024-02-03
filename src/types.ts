@@ -11,7 +11,6 @@ export interface Directory {
   updatedAt: Date
   storageClassName: StorageClassName
   driveId: string | null
-  parentDirectory: string | null
 }
 
 export interface File {
@@ -127,4 +126,32 @@ export interface RetrievalRequest {
   file: {
     cid: string
   }
+}
+
+export interface DataResponse {
+  success: boolean
+  code: number
+  message?: string
+}
+
+export type DataResponsePromise<T = {}, E = {}> = Promise<
+  [(DataResponse & T) | null, error: (DataResponse & E) | null]
+>
+
+export interface EdgeResponse {
+  ID: number
+  name: string
+  size: number
+  cid: string
+  bucket_uuid: string
+  status: string
+  piece_cid: string
+  piece_size: number
+  last_message: string
+  miner: string
+  make_deal: boolean
+  collection_name: string
+  created_at: Date
+  updated_at: Date
+  imageLink: string
 }
