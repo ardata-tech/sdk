@@ -9,6 +9,7 @@ import {
   SiaResponseData
 } from '../index'
 import { Config } from '..'
+import { DataResponsePromise } from '../types'
 
 export interface FileOperationsInterface {
   list: () => Promise<File[]>
@@ -64,7 +65,7 @@ export interface FileOperationsInterface {
     url: string
     name: string
   }) => Promise<{ success: boolean }>
-  getTotalSize: () => Promise<bigint>
+  getTotalSize: () => DataResponsePromise<{ totalSize: number }>
 }
 
 const FileOperations = (config: Config): FileOperationsInterface => {
@@ -462,13 +463,18 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.READ_DIRECTORY,
         'READ_DIRECTORY is not allowed.'
       )
-      const result = await axios.get(`${config.host}/files/total-size`, {
-        headers: {
-          Authorization: `Bearer ${config.apiKey}`
-        }
-      })
 
-      return result.data.totalSize
+      try {
+        const result = await axios.get(`${config.host}/files/total-size`, {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        })
+
+        return [result.data.totalSize, null]
+      } catch (error) {
+        return [error, null]
+      }
     }
   }
 }
