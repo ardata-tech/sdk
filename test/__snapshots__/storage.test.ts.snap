@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`===== Storage test ===== Get Storage should get storage details 1`] = `
+{
+  "capacity": toBeOneOf<Any,Any>,
+  "createdAt": toBeDateString<>,
+  "customCapacity": toBeOneOf<Any,Any>,
+  "id": Any<String>,
+  "name": Any<String>,
+  "sendWarningEmail": true,
+  "updatedAt": toBeDateString<>,
+  "userId": Any<String>,
+}
+`;
