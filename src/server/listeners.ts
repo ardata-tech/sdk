@@ -32,8 +32,8 @@ const ListenerOperations = (config: Config): ListenerOperationsInterface => {
     onTotalSizeChange: ({ onChange }) => {
       config.listener.emit('total-size:initialize')
       config.listener.on('total-size:change', async () => {
-        const totalSize = await fileOps.getTotalSize()
-        onChange(totalSize)
+        const [data] = await fileOps.getTotalSize()
+        onChange(data?.totalSize)
       })
     },
     onReadDirectoryEvent: async ({ id, onChange }) => {

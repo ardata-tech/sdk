@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`===== Drive test ===== » Get All Drives should get all drives 1`] = `
+[
+  {
+    "createdAt": Any<String>,
+    "driveId": null,
+    "id": Any<String>,
+    "name": Any<String>,
+    "ownerId": Any<String>,
+    "parentDirectoryId": null,
+    "softDeleted": Any<Boolean>,
+    "storageClassName": toBeOneOf<Any,>,
+    "updatedAt": Any<String>,
+  },
+  {
+    "createdAt": Any<String>,
+    "driveId": null,
+    "id": Any<String>,
+    "name": Any<String>,
+    "ownerId": Any<String>,
+    "parentDirectoryId": null,
+    "softDeleted": Any<Boolean>,
+    "storageClassName": toBeOneOf<Any,>,
+    "updatedAt": Any<String>,
+  },
+  {
+    "createdAt": Any<String>,
+    "driveId": null,
+    "id": Any<String>,
+    "name": Any<String>,
+    "ownerId": Any<String>,
+    "parentDirectoryId": null,
+    "softDeleted": Any<Boolean>,
+    "storageClassName": toBeOneOf<Any,>,
+    "updatedAt": Any<String>,
+  },
+]
+`;
+
+exports[`===== Drive test ===== » Get Drive Contents should get drive contents 1`] = `[]`;
+
+exports[`===== Drive test ===== » Get Drive Contents should get drive contents 2`] = `[]`;

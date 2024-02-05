@@ -2,29 +2,39 @@ import axios from 'axios'
 import { verifyAuthorizedCommand } from '../authorization'
 import { OPERATION_SCOPE } from '../constants'
 import { Config } from '..'
+import { DataResponsePromise } from '../types'
+
+interface FileAccessResponse {
+  users: Array<{ email: string; image: string | null }>
+  secureSharing: 'PUBLIC' | 'PASSWORD' | 'RESTRICTED'
+  password: null | string
+}
 
 export interface FileAccessOperationsInterface {
-  read: (params: { fileId: string; cid: string }) => Promise<any>
+  read: (params: {
+    fileId: string
+    cid: string
+  }) => DataResponsePromise<FileAccessResponse>
   add: (params: {
     fileId: string
     cid: string
     body: { email?: string; password?: string }
-  }) => Promise<any>
+  }) => DataResponsePromise
   delete: (params: {
     fileId: string
     cid: string
-    body: { email: string; deleteAll?: boolean }
-  }) => Promise<any>
+    body: { email?: string; deleteAll?: boolean }
+  }) => DataResponsePromise
   update: (params: {
     fileId: string
     cid: string
     body: { secureSharing: 'PUBLIC' | 'PASSWORD' | 'RESTRICTED' }
-  }) => Promise<any>
+  }) => DataResponsePromise
   verifyPassword: (params: {
     fileId: string
     cid: string
     body: { password: string }
-  }) => Promise<any>
+  }) => DataResponsePromise<{ isVerify: boolean }, { isVerify: boolean }>
 }
 const FileAccessOperations = (
   config: Config
@@ -36,15 +46,20 @@ const FileAccessOperations = (
         OPERATION_SCOPE.READ_FILE,
         'READ_FILE is not allowed.'
       )
-      const result = await axios.get(
-        `${config.webAppHost}/api/file-access/${fileId}/${cid}`,
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
+
+      try {
+        const result = await axios.get(
+          `${config.webAppHost}/api/file-access/${fileId}/${cid}`,
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           }
-        }
-      )
-      return result.data
+        )
+        return [result.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     add: async ({ fileId, cid, body }) => {
       verifyAuthorizedCommand(
@@ -52,17 +67,22 @@ const FileAccessOperations = (
         OPERATION_SCOPE.UPLOAD_FILE,
         'ADD_FILE_ACCESS is not allowed.'
       )
-      const result = await axios.post(
-        `${config.webAppHost}/api/file-access/${fileId}/${cid}`,
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
-          }
-        }
-      )
 
-      return result.data
+      try {
+        const result = await axios.post(
+          `${config.webAppHost}/api/file-access/${fileId}/${cid}`,
+          body,
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
+          }
+        )
+
+        return [result.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     delete: async ({ fileId, cid, body }) => {
       verifyAuthorizedCommand(
@@ -70,17 +90,22 @@ const FileAccessOperations = (
         OPERATION_SCOPE.UPLOAD_FILE,
         'DELETE_FILE_ACCESS is not allowed.'
       )
-      const result = await axios.delete(
-        `${config.webAppHost}/api/file-access/${fileId}/${cid}`,
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
-          },
-          data: body
-        }
-      )
 
-      return result.data
+      try {
+        const result = await axios.delete(
+          `${config.webAppHost}/api/file-access/${fileId}/${cid}`,
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            },
+            data: body
+          }
+        )
+
+        return [result.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     update: async ({ fileId, body, cid }) => {
       verifyAuthorizedCommand(
@@ -88,17 +113,22 @@ const FileAccessOperations = (
         OPERATION_SCOPE.UPLOAD_FILE,
         'UPDATE_FILE_ACCESS is not allowed.'
       )
-      const result = await axios.put(
-        `${config.webAppHost}/api/file-access/${fileId}/${cid}`,
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
-          }
-        }
-      )
 
-      return result.data
+      try {
+        const result = await axios.put(
+          `${config.webAppHost}/api/file-access/${fileId}/${cid}`,
+          body,
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
+          }
+        )
+
+        return [result.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     verifyPassword: async ({ body, cid, fileId }) => {
       verifyAuthorizedCommand(
@@ -106,17 +136,22 @@ const FileAccessOperations = (
         OPERATION_SCOPE.UPLOAD_FILE,
         'UPDATE_FILE_ACCESS is not allowed.'
       )
-      const result = await axios.post(
-        `${config.webAppHost}/api/file-access/password/${fileId}/${cid}`,
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
-          }
-        }
-      )
 
-      return result.data
+      try {
+        const result = await axios.post(
+          `${config.webAppHost}/api/file-access/password/${fileId}/${cid}`,
+          body,
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
+          }
+        )
+
+        return [result.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     }
   }
 }
