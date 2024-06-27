@@ -15,13 +15,19 @@ const StorageOperations = (config: Config): StorageOperationsInterface => {
         OPERATION_SCOPE.READ_DIRECTORY,
         'READ_DIRECTORY is not allowed.'
       )
-      const result = await axios.get(`${config.webAppHost}/api/storage`, {
-        headers: {
-          Authorization: `Bearer ${config.apiKey}`
-        }
-      })
 
-      return result.data
+      try {
+        const result = await axios.get(`${config.webAppHost}/api/storage`, {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        })
+
+        return [result.data, null]
+      } catch (error: any) {
+        console.error(error)
+        return [null, error.response.data]
+      }
     }
   }
 }

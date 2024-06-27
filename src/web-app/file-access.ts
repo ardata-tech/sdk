@@ -18,8 +18,8 @@ export interface FileAccessOperationsInterface {
   update: (params: {
     fileId: string
     cid: string
-    body: { secureSharing: 'PUBLIC' | 'PASSWORD' | 'RESTRICTED' }
-  }) => Promise<any>
+    body: { secureSharing: FileAccessResponse['secureSharing'] }
+  }) => DataResponsePromise
   verifyPassword: (params: {
     fileId: string
     cid: string

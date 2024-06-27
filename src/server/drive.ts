@@ -94,16 +94,20 @@ const DriveOperations = (config: Config): DriveOperationsInterface => {
         'UPDATE_DRIVE is not allowed.'
       )
 
-      const res = await axios.put(
-        `${config.host}/drives/${driveId}`,
-        { move: directoryIdsToMove, moveFiles: fileIdsToMove },
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
+      try {
+        const res = await axios.put(
+          `${config.host}/drives/${driveId}`,
+          { move: directoryIdsToMove, moveFiles: fileIdsToMove },
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           }
-        }
-      )
-      return res.data
+        )
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     delete: async ({ id }) => {
       verifyAuthorizedCommand(

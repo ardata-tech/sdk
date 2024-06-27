@@ -48,12 +48,12 @@ export interface FileOperationsInterface {
       }
     | undefined
   >
-  getIPFSFileMetadata: (params: { cid: string }) => Promise<IPFSMetadata | null>
-  getSiaFileMetadata: (params: { cid: string }) => Promise<SiaMetadata | null>
-  getDataURI: (params: {
-    id: string
-    password?: string
-  }) => Promise<File | null>
+  getIPFSFileMetadata: (params: {
+    cid: string
+  }) => DataResponsePromise<IPFSMetadata>
+  getSiaFileMetadata: (params: {
+    cid: string
+  }) => DataResponsePromise<SiaMetadata>
   getURL: (params: {
     id: string
     password?: string
@@ -64,7 +64,7 @@ export interface FileOperationsInterface {
     url: string
     name: string
   }) => Promise<{ success: boolean }>
-  getTotalSize: () => Promise<bigint>
+  getTotalSize: () => DataResponsePromise<{ totalSize: bigint }>
 }
 
 const FileOperations = (config: Config): FileOperationsInterface => {
@@ -396,6 +396,26 @@ const FileOperations = (config: Config): FileOperationsInterface => {
 
       return null
     },
+    // getDataURI: async ({ id, password }) => {
+    //   try {
+    //     const dataURI = await axios.post<File>(
+    //       `${config.host}/files/data-uri/${id}`,
+    //       { password },
+    //       {
+    //         headers: {
+    //           Authorization: `Bearer ${config.apiKey}`
+    //         }
+    //       }
+    //     )
+    //
+    //     const dataURIdata = dataURI.data
+    //     if (dataURIdata) return dataURIdata
+    //   } catch (error) {
+    //     console.log(error)
+    //   }
+    //
+    //   return null
+    // },
     getURL: async ({ id, password, signal, setProgress }) => {
       try {
         const file = await axios.get(`${config.host}/files/${id}`, {
