@@ -9,28 +9,27 @@ import {
   SiaResponseData
 } from '../index'
 import { Config } from '..'
-import { DataResponse, DataResponsePromise, EdgeResponse } from '../types'
 
 export interface FileOperationsInterface {
-  list: () => DataResponsePromise<{ files: File[] }>
-  details: (params: { id: string }) => DataResponsePromise<File>
+  list: () => Promise<File[]>
+  details: (params: { id: string }) => Promise<File>
   upload: (params: {
     file: any
     directoryId: string
     storageClasses?: string[]
     setProgress?: (progress: number) => void
     signal?: GenericAbortSignal | undefined
-  }) => DataResponsePromise<File>
+  }) => Promise<any>
   directEdgeUpload: (params: {
     file: any
     setProgress?: (progress: number) => void
     signal?: GenericAbortSignal | undefined
-  }) => DataResponsePromise<EdgeResponse>
+  }) => Promise<any>
   bulkUpload: (params: {
     files: { file: any; directoryId: string; storageClasses?: string[] }[]
-  }) => Promise<[Array<DataResponse & File> | null, error: DataResponse | null]>
-  delete: (params: { id: string }) => DataResponsePromise<File>
-  rename: (params: { id: string; name: string }) => DataResponsePromise
+  }) => Promise<any>
+  delete: (params: { id: string }) => Promise<any>
+  rename: (params: { id: string; name: string }) => Promise<any>
   update: (params: {
     id: string
     name?: string
@@ -39,17 +38,15 @@ export interface FileOperationsInterface {
     removeStorageClasses?: string[]
     setProgress?: (progress: number) => void
     signal?: GenericAbortSignal | undefined
-  }) => DataResponsePromise<File>
+  }) => Promise<any>
   getReplications: (params: { cid: string }) => Promise<
-    [
-      {
-        IPFS: IPFSResponseData
-        Sia: SiaResponseData
+    | {
+        IPFS: any
+        Sia: any
         Filecoin: any
         Filefilego: any
-      } | null,
-      null | any
-    ]
+      }
+    | undefined
   >
   getIPFSFileMetadata: (params: {
     cid: string
@@ -57,21 +54,17 @@ export interface FileOperationsInterface {
   getSiaFileMetadata: (params: {
     cid: string
   }) => DataResponsePromise<SiaMetadata>
-  // getDataURI: (params: {
-  //   id: string
-  //   password?: string
-  // }) => Promise<File | null>
   getURL: (params: {
     id: string
     password?: string
     setProgress?: (progress: number) => void
     signal?: GenericAbortSignal | undefined
-  }) => Promise<[string | null, null | DataResponse]>
+  }) => Promise<string | null>
   download: (params: {
     url: string
     name: string
   }) => Promise<{ success: boolean }>
-  getTotalSize: () => DataResponsePromise<{ totalSize: number }>
+  getTotalSize: () => DataResponsePromise<{ totalSize: bigint }>
 }
 
 const FileOperations = (config: Config): FileOperationsInterface => {
@@ -82,17 +75,12 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.READ_FILE,
         'READ_FILE is not allowed.'
       )
-
-      try {
-        const res = await axios.get(`${config.host}/files/`, {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
-          }
-        })
-        return [res.data, null]
-      } catch (error: any) {
-        return [null, error.response.data]
-      }
+      const res = await axios.get(`${config.host}/files/`, {
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`
+        }
+      })
+      return res.data
     },
     details: async ({ id }) => {
       verifyAuthorizedCommand(
@@ -100,17 +88,12 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.READ_FILE,
         'READ_FILE is not allowed.'
       )
-
-      try {
-        const res = await axios.get(`${config.host}/files/${id}`, {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
-          }
-        })
-        return [res.data, null]
-      } catch (error: any) {
-        return [null, error.response.data]
-      }
+      const res = await axios.get(`${config.host}/files/${id}`, {
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`
+        }
+      })
+      return res.data
     },
     upload: async ({
       file,
@@ -131,8 +114,8 @@ const FileOperations = (config: Config): FileOperationsInterface => {
       if (storageClasses && storageClasses.length > 0)
         formData.append('storageClasses', JSON.stringify(storageClasses))
 
-      try {
-        const res = await axios.post(`${config.host}/files/upload`, formData, {
+      const res = await axios
+        .post(`${config.host}/files/upload`, formData, {
           headers: {
             Authorization: `Bearer ${config.apiKey}`
           },
@@ -144,26 +127,18 @@ const FileOperations = (config: Config): FileOperationsInterface => {
             setProgress(progress)
           }
         })
+        .catch(function (e) {
+          // if the reason behind the failure
+          // is a cancellation
+          if (axios.isCancel(e)) {
+            console.error('Uploading canceled')
+          } else {
+            return e.response
+            // handle HTTP error...
+          }
+        })
 
-        return [res.data, null]
-      } catch (error: any) {
-        // if the reason behind the failure
-        // is a cancellation
-        if (axios.isCancel(error)) {
-          console.error('Uploading canceled')
-          return [
-            null,
-            {
-              success: false,
-              code: 499,
-              message: 'Uploading canceled'
-            }
-          ]
-        } else {
-          return [null, error.response.data]
-          // handle HTTP error...
-        }
-      }
+      if (res) return res.data
     },
     directEdgeUpload: async ({ file, setProgress, signal }) => {
       verifyAuthorizedCommand(
@@ -171,47 +146,33 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.UPLOAD_FILE,
         'UPLOAD_FILE is not allowed.'
       )
-
-      try {
-        const formData = new FormData()
-        formData.append('file', file)
-        const res = await axios.post(
-          `${config.host}/files/direct-edge-upload`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${config.apiKey}`
-            },
-            signal,
-            onUploadProgress: (progressEvent) => {
-              if (!setProgress) return
-              setProgress(0)
-              const progress = progressEvent.progress! * 100
-              setProgress(progress)
-            }
+      const formData = new FormData()
+      formData.append('file', file)
+      const res = await axios
+        .post(`${config.host}/files/direct-edge-upload`, formData, {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          },
+          signal,
+          onUploadProgress: (progressEvent) => {
+            if (!setProgress) return
+            setProgress(0)
+            const progress = progressEvent.progress! * 100
+            setProgress(progress)
           }
-        )
+        })
+        .catch(function (e) {
+          // if the reason behind the failure
+          // is a cancellation
+          if (axios.isCancel(e)) {
+            console.error('Uploading canceled')
+          } else {
+            return e.response
+            // handle HTTP error...
+          }
+        })
 
-        return [res.data, null]
-      } catch (error: any) {
-        // if the reason behind the failure
-        // is a cancellation
-        if (axios.isCancel(error)) {
-          console.error('Uploading canceled')
-          return [
-            null,
-            {
-              success: false,
-              code: 499,
-              message: 'Uploading canceled'
-            }
-          ]
-        } else {
-          return [null, error.response.data]
-
-          // handle HTTP error...
-        }
-      }
+      if (res) return res.data
     },
     bulkUpload: async ({ files }) => {
       verifyAuthorizedCommand(
@@ -220,37 +181,24 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         'UPLOAD_FILES is not allowed.'
       )
 
-      try {
-        const filesData: Array<DataResponse & File> = []
-        await Promise.all(
-          files.map(async (data) => {
-            const formData = new FormData()
-            formData.append('file', data.file)
-            formData.append('directoryId', data.directoryId)
-            if (data.storageClasses && data.storageClasses.length > 0)
-              formData.append(
-                'storageClasses',
-                JSON.stringify(data.storageClasses)
-              )
-
-            const res = await axios.post(
-              `${config.host}/files/upload`,
-              formData,
-              {
-                headers: {
-                  Authorization: `Bearer ${config.apiKey}`
-                }
-              }
+      await Promise.all(
+        files.map(async (data) => {
+          const formData = new FormData()
+          formData.append('file', data.file)
+          formData.append('directoryId', data.directoryId)
+          if (data.storageClasses && data.storageClasses.length > 0)
+            formData.append(
+              'storageClasses',
+              JSON.stringify(data.storageClasses)
             )
 
-            filesData.push(res.data)
+          return await axios.post(`${config.host}/files/upload`, formData, {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           })
-        )
-
-        return [filesData, null]
-      } catch (error: any) {
-        return [null, error]
-      }
+        })
+      )
     },
     delete: async ({ id }) => {
       verifyAuthorizedCommand(
@@ -258,17 +206,12 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.DELETE_FILE,
         'DELETE_FILE is not allowed.'
       )
-
-      try {
-        const res = await axios.delete(`${config.host}/files/${id}`, {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
-          }
-        })
-        return [res.data, null]
-      } catch (error: any) {
-        return [null, error.response.data]
-      }
+      const res = await axios.delete(`${config.host}/files/${id}`, {
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`
+        }
+      })
+      return res.data
     },
     rename: async ({ id, name }) => {
       verifyAuthorizedCommand(
@@ -276,21 +219,16 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.UPLOAD_FILE | OPERATION_SCOPE.DELETE_FILE,
         'RENAME_FILE is not allowed.'
       )
-
-      try {
-        const res = await axios.put(
-          `${config.host}/files/${id}`,
-          { name },
-          {
-            headers: {
-              Authorization: `Bearer ${config.apiKey}`
-            }
+      const res = await axios.put(
+        `${config.host}/files/${id}`,
+        { name },
+        {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
           }
-        )
-        return [res.data as DataResponse, null]
-      } catch (error: any) {
-        return [null, error.response.data]
-      }
+        }
+      )
+      return res.data
     },
     update: async ({
       id,
@@ -307,59 +245,43 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         'UPDATE_FILE is not allowed.'
       )
       if (file !== undefined) {
-        try {
-          const formData = new FormData()
-          formData.append('file', file)
-          const res = await axios.put(
-            `${config.host}/files/${id}/update-file-content`,
-            formData,
-            {
-              headers: {
-                Authorization: `Bearer ${config.apiKey}`
-              },
-              signal,
-              onUploadProgress: (progressEvent) => {
-                if (!setProgress) return
-                setProgress(0)
-                const progress = progressEvent.progress! * 100
-                setProgress(progress)
-              }
+        const formData = new FormData()
+        formData.append('file', file)
+        const res = await axios
+          .put(`${config.host}/files/${id}/update-file-content`, formData, {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            },
+            signal,
+            onUploadProgress: (progressEvent) => {
+              if (!setProgress) return
+              setProgress(0)
+              const progress = progressEvent.progress! * 100
+              setProgress(progress)
             }
-          )
-          return [res.data, null]
-        } catch (error: any) {
-          // if the reason behind the failure
-          // is a cancellation
-          if (axios.isCancel(error)) {
-            console.error('Uploading canceled')
-            return [
-              null,
-              {
-                success: false,
-                code: 499,
-                message: 'Uploading canceled'
-              } as DataResponse
-            ]
-          } else {
-            return [null, error.response.data]
-            // handle HTTP error...
-          }
-        }
+          })
+          .catch(function (e) {
+            // if the reason behind the failure
+            // is a cancellation
+            if (axios.isCancel(e)) {
+              console.error('Uploading canceled')
+            } else {
+              return e.response
+              // handle HTTP error...
+            }
+          })
+        if (res) return res.data
       } else {
-        try {
-          const res = await axios.put(
-            `${config.host}/files/${id}`,
-            { name, addStorageClasses, removeStorageClasses },
-            {
-              headers: {
-                Authorization: `Bearer ${config.apiKey}`
-              }
+        const res = await axios.put(
+          `${config.host}/files/${id}`,
+          { name, addStorageClasses, removeStorageClasses },
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
             }
-          )
-          return [res.data, null]
-        } catch (error: any) {
-          return [null, error.response.data]
-        }
+          }
+        )
+        return res.data
       }
     },
     getReplications: async ({ cid }) => {
@@ -369,63 +291,52 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         'READ_FILE is not allowed.'
       )
 
-      try {
-        const defaults = await axios.get(`${config.host}/edge-nodes`, {
-          headers: { Authorization: `Bearer ${config.apiKey}` }
-        })
+      const defaults = await axios.get(`${config.host}/edge-nodes`, {
+        headers: { Authorization: `Bearer ${config.apiKey}` }
+      })
 
-        let replicationData: {
-          IPFS: IPFSResponseData
-          Sia: SiaResponseData
-          Filecoin: any
-          Filefilego: any
-        } = {
-          IPFS: {
-            links: defaults.data.edgeNodes.map((node: string) => node + '/gw/'),
-            status: 'Replicated',
-            metadata: null
-          },
-          Sia: {
-            links: [
-              `https://sia-integration.delta.storage/open/object/meta/${config.userId}/`
-            ],
-            status: '',
-            metadata: null
-          },
-          Filecoin: {
-            links: [],
-            status: '',
-            metadata: null
-          },
-          Filefilego: {
-            links: [],
-            status: '',
-            metadata: null
-          }
+      let replicationData: {
+        IPFS: IPFSResponseData
+        Sia: SiaResponseData
+        Filecoin: any
+        Filefilego: any
+      } = {
+        IPFS: {
+          links: defaults.data.edgeNodes.map((node: string) => node + '/gw/'),
+          status: 'Replicated',
+          metadata: null
+        },
+        Sia: {
+          links: [
+            `https://sia-integration.delta.storage/open/object/meta/${config.userId}/`
+          ],
+          status: '',
+          metadata: null
+        },
+        Filecoin: {
+          links: [],
+          status: '',
+          metadata: null
+        },
+        Filefilego: {
+          links: [],
+          status: '',
+          metadata: null
         }
-
-        const [ipfsMetadata, ipfsMetadataError] = await FileOperations(
-          config
-        ).getIPFSFileMetadata({
-          cid
-        })
-        replicationData.IPFS.metadata = ipfsMetadata
-
-        const [siaFileMetadata, siaFileMetadataError] = await FileOperations(
-          config
-        ).getSiaFileMetadata({ cid })
-        replicationData.Sia.metadata = siaFileMetadata
-
-        replicationData.Sia.status =
-          replicationData.Sia.metadata === null ||
-          !replicationData.Sia.metadata?.object.eTag.length
-            ? 'In Progress'
-            : 'Replicated'
-
-        return [replicationData, { ipfsMetadataError, siaFileMetadataError }]
-      } catch (error: any) {
-        return [null, error.response.data]
       }
+      replicationData.IPFS.metadata = await FileOperations(
+        config
+      ).getIPFSFileMetadata({ cid })
+      replicationData.Sia.metadata = await FileOperations(
+        config
+      ).getSiaFileMetadata({ cid })
+      replicationData.Sia.status =
+        replicationData.Sia.metadata === null ||
+        !replicationData.Sia.metadata?.object.eTag.length
+          ? 'In Progress'
+          : 'Replicated'
+
+      return replicationData
     },
     getIPFSFileMetadata: async ({ cid }) => {
       try {
@@ -438,11 +349,13 @@ const FileOperations = (config: Config): FileOperationsInterface => {
           }
         )
         const ipfsMetadata = ipfsResponse?.data
-
-        return [ipfsMetadata, null]
-      } catch (error: any) {
-        return [null, error.response.data]
+        if (ipfsMetadata) {
+          return ipfsMetadata
+        }
+      } catch (error) {
+        console.log(error)
       }
+      return null
     },
     getSiaFileMetadata: async ({ cid }) => {
       try {
@@ -455,10 +368,33 @@ const FileOperations = (config: Config): FileOperationsInterface => {
           }
         )
         const siaMetadata = siaResponse?.data
-        return [siaMetadata, null]
-      } catch (error: any) {
-        return [null, error.response.data]
+        if (siaMetadata) {
+          return siaMetadata
+        }
+      } catch (error) {
+        console.log(error)
       }
+      return null
+    },
+    getDataURI: async ({ id, password }) => {
+      try {
+        const dataURI = await axios.post<File>(
+          `${config.host}/files/data-uri/${id}`,
+          { password },
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
+          }
+        )
+
+        const dataURIdata = dataURI.data
+        if (dataURIdata) return dataURIdata
+      } catch (error) {
+        console.log(error)
+      }
+
+      return null
     },
     // getDataURI: async ({ id, password }) => {
     //   try {
@@ -508,20 +444,16 @@ const FileOperations = (config: Config): FileOperationsInterface => {
           }
         )
         const contentType = response.headers['content-type']
-        let url: string = ''
-        if (typeof window === 'undefined') {
-          url = URL.createObjectURL(
-            new Blob([response.data], { type: contentType })
-          )
-        } else {
-          url = window.URL.createObjectURL(
-            new Blob([response.data], { type: contentType })
-          )
-        }
-        return [url, null]
-      } catch (error: any) {
-        return [null, error.response.data]
+        const url = window.URL.createObjectURL(
+          new Blob([response.data], { type: contentType })
+        )
+
+        if (url) return url
+      } catch (error) {
+        console.log(error)
       }
+
+      return null
     },
     download: async ({ url, name }) => {
       try {
@@ -550,18 +482,13 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.READ_DIRECTORY,
         'READ_DIRECTORY is not allowed.'
       )
+      const result = await axios.get(`${config.host}/files/total-size`, {
+        headers: {
+          Authorization: `Bearer ${config.apiKey}`
+        }
+      })
 
-      try {
-        const result = await axios.get(`${config.host}/files/total-size`, {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
-          }
-        })
-
-        return [result.data, null]
-      } catch (error: any) {
-        return [null, error.response.data]
-      }
+      return result.data.totalSize
     }
   }
 }
