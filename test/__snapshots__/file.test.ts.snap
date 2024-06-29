@@ -183,8 +183,14 @@ exports[`===== File test ===== List of Files should get a list of files 1`] = `
     "version": toEqualCaseInsensitive<1>,
     "versionTag": toEqualCaseInsensitive<latest>,
   },
+]
+`;
+
+exports[`===== File test ===== » Upload a File should bulk upload file 1`] = `
+[
   {
     "cid": Any<String>,
+    "code": toEqualCaseInsensitive<201>,
     "contentType": Any<String>,
     "createdAt": toBeDateString<>,
     "directoryId": Any<String>,
@@ -205,6 +211,7 @@ exports[`===== File test ===== List of Files should get a list of files 1`] = `
     "softDeleted": toBeFalse<>,
     "status": Any<String>,
     "storageClasses": toBeArray<>,
+    "success": toBeTrue<>,
     "updatedAt": toBeDateString<>,
     "version": toEqualCaseInsensitive<1>,
     "versionTag": toEqualCaseInsensitive<latest>,

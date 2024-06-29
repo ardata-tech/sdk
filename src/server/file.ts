@@ -9,7 +9,7 @@ import {
   SiaResponseData
 } from '../index'
 import { Config } from '..'
-import { DataResponse, DataResponsePromise } from '../types'
+import { DataResponse, DataResponsePromise, EdgeResponse } from '../types'
 
 export interface FileOperationsInterface {
   list: () => DataResponsePromise<{ files: File[] }>
@@ -26,6 +26,11 @@ export interface FileOperationsInterface {
     setProgress?: (progress: number) => void
     signal?: GenericAbortSignal | undefined
   }) => DataResponsePromise<File>
+  directEdgeUpload: (params: {
+    file: any
+    setProgress?: (progress: number) => void
+    signal?: GenericAbortSignal | undefined
+  }) => DataResponsePromise<EdgeResponse>
   bulkUpload: (params: {
     files: { file: any; directoryId: string; storageClasses?: string[] }[]
   }) => Promise<[Array<DataResponse & File> | null, error: DataResponse | null]>
