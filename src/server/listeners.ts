@@ -31,6 +31,8 @@ const ListenerOperations = (config: Config): ListenerOperationsInterface => {
     },
     onTotalSizeChange: ({ onChange }) => {
       config.listener.emit('total-size:initialize')
+      // @ts-expect-error type
+
       config.listener.on('total-size:change', async () => {
         const [data] = await fileOps.getTotalSize()
         onChange(data?.totalSize)
@@ -38,6 +40,8 @@ const ListenerOperations = (config: Config): ListenerOperationsInterface => {
     },
     onReadDirectoryEvent: async ({ id, onChange }) => {
       config.listener.emit('directory:initialize')
+      // @ts-expect-error type
+
       config.listener.on('directory:change', async () => {
         const [latestDirectory] = await dirOps.contents({ id })
         if (!latestDirectory) return
@@ -45,6 +49,7 @@ const ListenerOperations = (config: Config): ListenerOperationsInterface => {
       })
     },
     onReadDirectorySegmentChange: ({ segments, onChange }) => {
+      // @ts-expect-error type
       config.listener.on('directory:change', async () => {
         const res = await dirOps.getBySegment({ segments })
         onChange(res)
