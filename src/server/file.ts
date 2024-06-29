@@ -182,18 +182,26 @@ const FileOperations = (config: Config): FileOperationsInterface => {
             setProgress(progress)
           }
         })
-        .catch(function (e) {
-          // if the reason behind the failure
-          // is a cancellation
-          if (axios.isCancel(e)) {
-            console.error('Uploading canceled')
-          } else {
-            return e.response
-            // handle HTTP error...
-          }
-        })
 
-      if (res) return res.data
+        return [res.data, null]
+      } catch (error: any) {
+        // if the reason behind the failure
+        // is a cancellation
+        if (axios.isCancel(error)) {
+          console.error('Uploading canceled')
+          return [
+            null,
+            {
+              success: false,
+              code: 499,
+              message: 'Uploading canceled'
+            }
+          ]
+        } else {
+          return [null, error.response.data]
+          // handle HTTP error...
+        }
+      }
     },
     bulkUpload: async ({ files }) => {
       verifyAuthorizedCommand(

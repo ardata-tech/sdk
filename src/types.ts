@@ -116,6 +116,8 @@ export enum RetrievalRequestStatus {
 }
 export interface RetrievalRequest {
   id: string
+  email: string
+  token: string
   dsn: string
   userId: string
   status: RetrievalRequestStatus
