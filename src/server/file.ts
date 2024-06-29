@@ -20,11 +20,6 @@ export interface FileOperationsInterface {
     storageClasses?: string[]
     setProgress?: (progress: number) => void
     signal?: GenericAbortSignal | undefined
-  }) => Promise<any>
-  directEdgeUpload: (params: {
-    file: any
-    setProgress?: (progress: number) => void
-    signal?: GenericAbortSignal | undefined
   }) => DataResponsePromise<File>
   directEdgeUpload: (params: {
     file: any
@@ -172,21 +167,26 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         OPERATION_SCOPE.UPLOAD_FILE,
         'UPLOAD_FILE is not allowed.'
       )
-      const formData = new FormData()
-      formData.append('file', file)
-      const res = await axios
-        .post(`${config.host}/files/direct-edge-upload`, formData, {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
-          },
-          signal,
-          onUploadProgress: (progressEvent) => {
-            if (!setProgress) return
-            setProgress(0)
-            const progress = progressEvent.progress! * 100
-            setProgress(progress)
+
+      try {
+        const formData = new FormData()
+        formData.append('file', file)
+        const res = await axios.post(
+          `${config.host}/files/direct-edge-upload`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            },
+            signal,
+            onUploadProgress: (progressEvent) => {
+              if (!setProgress) return
+              setProgress(0)
+              const progress = progressEvent.progress! * 100
+              setProgress(progress)
+            }
           }
-        })
+        )
 
         return [res.data, null]
       } catch (error: any) {
@@ -204,6 +204,7 @@ const FileOperations = (config: Config): FileOperationsInterface => {
           ]
         } else {
           return [null, error.response.data]
+
           // handle HTTP error...
         }
       }
@@ -455,26 +456,6 @@ const FileOperations = (config: Config): FileOperationsInterface => {
         return [null, error.response.data]
       }
     },
-    // getDataURI: async ({ id, password }) => {
-    //   try {
-    //     const dataURI = await axios.post<File>(
-    //       `${config.host}/files/data-uri/${id}`,
-    //       { password },
-    //       {
-    //         headers: {
-    //           Authorization: `Bearer ${config.apiKey}`
-    //         }
-    //       }
-    //     )
-    //
-    //     const dataURIdata = dataURI.data
-    //     if (dataURIdata) return dataURIdata
-    //   } catch (error) {
-    //     console.log(error)
-    //   }
-    //
-    //   return null
-    // },
     getURL: async ({ id, password, signal, setProgress }) => {
       try {
         const file = await axios.get(`${config.host}/files/${id}`, {
