@@ -30,5 +30,6 @@ jobs:
         env:
           API_KEY: '1d6c5c07-fdeb-4c86-b6b6-56b88eaa67dc.0.de986a66-4ddc-4b6e-b353-6b2e3381d46b.kmJPPMMSo5ELMDpCWKaX2it5k55qVn7QM6iwWZ5NBwN'
           TEST_DELTA_STORAGE_SERVER_HOST: https://staging-api.delta.storage
+          TEST_DELTA_STORAGE_WEB_HOST: https://staging-app.delta.storage
       - name: Build
         run: yarn build

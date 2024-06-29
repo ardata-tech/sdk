@@ -2,9 +2,21 @@ import axios from 'axios'
 import { verifyAuthorizedCommand } from '../authorization'
 import { OPERATION_SCOPE } from '../constants'
 import { Config } from '..'
+import { DataResponsePromise } from '../types'
 
 export interface StorageOperationsInterface {
-  read: () => Promise<any>
+  read: () => DataResponsePromise<{
+    storage: {
+      name: string
+      userId: string
+      id: string
+      capacity: bigint
+      customCapacity: bigint | null
+      createdAt: Date
+      updatedAt: Date
+    } | null
+    quantity: number
+  }>
 }
 
 const StorageOperations = (config: Config): StorageOperationsInterface => {
