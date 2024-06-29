@@ -1,5 +1,5 @@
 import { Config } from '..'
-import { Directory, File } from '../types'
+import { DataResponse, Directory, File } from '../types'
 import directoryOperations from './directory'
 import fileOperations from './file'
 
@@ -9,7 +9,9 @@ export interface ListenerOperationsInterface {
   onTotalSizeChange: (params: { onChange: (data: any) => void }) => void
   onReadDirectoryEvent: (params: {
     id: string
-    onChange: (directory: { directories: Directory[]; files: File[] }) => void
+    onChange: (
+      directory: DataResponse & { directories: Directory[]; files: File[] }
+    ) => void
   }) => void
   onReadDirectorySegmentChange: (params: {
     segments: string
@@ -37,7 +39,8 @@ const ListenerOperations = (config: Config): ListenerOperationsInterface => {
     onReadDirectoryEvent: async ({ id, onChange }) => {
       config.listener.emit('directory:initialize')
       config.listener.on('directory:change', async () => {
-        const latestDirectory = await dirOps.contents({ id })
+        const [latestDirectory] = await dirOps.contents({ id })
+        if (!latestDirectory) return
         onChange(latestDirectory)
       })
     },

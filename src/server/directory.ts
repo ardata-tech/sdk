@@ -2,44 +2,49 @@ import axios, { GenericAbortSignal } from 'axios'
 import { verifyAuthorizedCommand } from '../authorization'
 import { OPERATION_SCOPE } from '../constants'
 import { Config } from '..'
-import { Directory, File } from '../types'
+import { DataResponsePromise, Directory, File } from '../types'
 
 export interface DirectoryOperationsInterface {
   contents: (params: {
     id?: string
-  }) => Promise<{ directories: Directory[]; files: File[] }>
-  getBySegment: (params: { segments: string }) => Promise<{
+  }) => DataResponsePromise<{ directories: Directory[]; files: File[] }>
+  getBySegment: (params: { segments: string }) => DataResponsePromise<{
     directories: Pick<Directory, 'name' | 'id'>[]
     directoryLink: string
   }>
   create: (params: {
     name: string
-    parentDirectoryId?: string
+    parentDirectoryId: string
     storageClass?: string
-  }) => Promise<any>
-  rename: (params: { id: string; name: string }) => Promise<any>
+  }) => DataResponsePromise<Pick<Directory, 'id' | 'name' | 'storageClassName'>>
+  rename: (params: {
+    id: string
+    name: string
+  }) => DataResponsePromise<Pick<Directory, 'id' | 'name' | 'storageClassName'>>
   update: (params: {
     id: string
     name: string
     storageClass?: string
-  }) => Promise<any>
+  }) => DataResponsePromise<Pick<Directory, 'id' | 'name' | 'storageClassName'>>
   move: (params: {
     id: string
     directoryIdsToMove: string[]
     fileIdsToMove?: string[]
-  }) => Promise<any>
-  delete: (params: { id: string }) => Promise<any>
-  getTotalSize: (params: { id: string }) => Promise<bigint>
+  }) => DataResponsePromise<Pick<Directory, 'id' | 'name' | 'storageClassName'>>
+  delete: (params: { id: string }) => DataResponsePromise<{
+    deletedFolders: string[]
+    deletedFiles: string[]
+  }>
+  getTotalSize: (params: {
+    id: string
+  }) => DataResponsePromise<{ totalSize: bigint }>
   download: (params: {
     id: string
     name: string
     setProgress?: (progress: number) => void
     signal?: GenericAbortSignal | undefined
-  }) => Promise<{ success: boolean }>
-  getZip: (params: {
-    id: string
-    name: string
-  }) => Promise<{ success: boolean }>
+  }) => DataResponsePromise
+  getZip: (params: { id: string; name: string }) => DataResponsePromise
 }
 
 const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
@@ -50,12 +55,17 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         OPERATION_SCOPE.READ_DIRECTORY,
         'READ_DIRECTORY is not allowed.'
       )
-      const res = await axios.get(`${config.host}/directory/${id ?? ''}`, {
-        headers: {
-          Authorization: `Bearer ${config.apiKey}`
-        }
-      })
-      return res.data
+
+      try {
+        const res = await axios.get(`${config.host}/directory/${id ?? ''}`, {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        })
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     getBySegment: async ({ segments }) => {
       verifyAuthorizedCommand(
@@ -63,17 +73,22 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         OPERATION_SCOPE.READ_DIRECTORY,
         'READ_DIRECTORY is not allowed.'
       )
-      const query = segments.split('/').join('&segment[]=')
 
-      const res = await axios.get(
-        `${config.host}/directory?segment[]=${query}`,
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
+      try {
+        const query = segments.split('/').join('&segment[]=')
+
+        const res = await axios.get(
+          `${config.host}/directory?segment[]=${query}`,
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           }
-        }
-      )
-      return res.data
+        )
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     create: async ({ name, parentDirectoryId, storageClass }) => {
       verifyAuthorizedCommand(
@@ -81,16 +96,21 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         OPERATION_SCOPE.CREATE_DIRECTORY,
         'CREATE_DIRECTORY is not allowed.'
       )
-      const res = await axios.post(
-        `${config.host}/directory/create`,
-        { name, parentDirectoryId, storageClass },
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
+
+      try {
+        const res = await axios.post(
+          `${config.host}/directory/create`,
+          { name, parentDirectoryId, storageClass },
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           }
-        }
-      )
-      return res.data
+        )
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     rename: async ({ id, name }) => {
       verifyAuthorizedCommand(
@@ -98,16 +118,22 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         OPERATION_SCOPE.CREATE_DIRECTORY | OPERATION_SCOPE.DELETE_DIRECTORY,
         'UPDATE_DIRECTORY is not allowed.'
       )
-      const res = await axios.put(
-        `${config.host}/directory/${id}`,
-        { name },
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
+
+      try {
+        const res = await axios.put(
+          `${config.host}/directory/${id}`,
+          { name },
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           }
-        }
-      )
-      return res.data
+        )
+
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     update: async ({ id, name, storageClass }) => {
       verifyAuthorizedCommand(
@@ -115,16 +141,22 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         OPERATION_SCOPE.CREATE_DIRECTORY | OPERATION_SCOPE.DELETE_DIRECTORY,
         'UPDATE_DIRECTORY is not allowed.'
       )
-      const res = await axios.put(
-        `${config.host}/directory/${id}`,
-        { name, storageClass },
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
+
+      try {
+        const res = await axios.put(
+          `${config.host}/directory/${id}`,
+          { name, storageClass },
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           }
-        }
-      )
-      return res.data
+        )
+
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     move: async ({ id, directoryIdsToMove, fileIdsToMove }) => {
       verifyAuthorizedCommand(
@@ -132,16 +164,22 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         OPERATION_SCOPE.CREATE_DIRECTORY | OPERATION_SCOPE.DELETE_DIRECTORY,
         'UPDATE_DIRECTORY is not allowed.'
       )
-      const res = await axios.put(
-        `${config.host}/directory/${id}`,
-        { move: directoryIdsToMove, moveFiles: fileIdsToMove },
-        {
-          headers: {
-            Authorization: `Bearer ${config.apiKey}`
+
+      try {
+        const res = await axios.put(
+          `${config.host}/directory/${id}`,
+          { move: directoryIdsToMove, moveFiles: fileIdsToMove },
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
           }
-        }
-      )
-      return res.data
+        )
+
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     delete: async ({ id }) => {
       verifyAuthorizedCommand(
@@ -149,12 +187,17 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         OPERATION_SCOPE.DELETE_DIRECTORY,
         'DELETE_DIRECTORY is not allowed.'
       )
-      const res = await axios.delete(`${config.host}/directory/${id}`, {
-        headers: {
-          Authorization: `Bearer ${config.apiKey}`
-        }
-      })
-      return res.data
+
+      try {
+        const res = await axios.delete(`${config.host}/directory/${id}`, {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        })
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     getTotalSize: async ({ id }) => {
       verifyAuthorizedCommand(
@@ -162,13 +205,18 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         OPERATION_SCOPE.READ_DIRECTORY,
         'READ_DIRECTORY is not allowed.'
       )
-      const result = await axios.get(`${config.host}/directory/${id}/size`, {
-        headers: {
-          Authorization: `Bearer ${config.apiKey}`
-        }
-      })
 
-      return result.data.totalSize
+      try {
+        const result = await axios.get(`${config.host}/directory/${id}/size`, {
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        })
+
+        return [result.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     },
     download: async ({ id, name, signal, setProgress }) => {
       verifyAuthorizedCommand(
@@ -212,18 +260,20 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         // Optionally, revoke the blob URL after the download starts
         window.URL.revokeObjectURL(url)
 
-        return { success: true }
+        return [response.data, null]
       } catch (error: any) {
         // if the reason behind the failure
         // is a cancellation
         if (axios.isCancel(error)) {
           console.error('Downloading canceled')
+          return [
+            null,
+            { success: false, message: 'Downloading canceled', code: 499 }
+          ]
         } else {
-          return error.response
+          return [null, error.response.data]
           // handle HTTP error...
         }
-
-        return { success: false }
       }
     },
     getZip: async ({ id, name }) => {
@@ -232,13 +282,18 @@ const DirectoryOperations = (config: Config): DirectoryOperationsInterface => {
         OPERATION_SCOPE.READ_DIRECTORY,
         'READ_DIRECTORY is not allowed.'
       )
-      const res = await axios.get(`${config.host}/directory/${id}/zip`, {
-        responseType: 'blob',
-        headers: {
-          Authorization: `Bearer ${config.apiKey}`
-        }
-      })
-      return res.data
+
+      try {
+        const res = await axios.get(`${config.host}/directory/${id}/zip`, {
+          responseType: 'blob',
+          headers: {
+            Authorization: `Bearer ${config.apiKey}`
+          }
+        })
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
     }
   }
 }
