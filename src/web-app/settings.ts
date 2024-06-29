@@ -1,7 +1,15 @@
 import axios from 'axios'
 import { Config } from '..'
+import { DataResponsePromise } from '../types'
+
+interface SettingsResponse {
+  node: string | null
+  isSecureMode: boolean
+  customEdgeNodes: string[]
+}
+
 export interface SettingsOperationsInterface {
-  read: () => Promise<any>
+  read: () => DataResponsePromise<{ settings: SettingsResponse }>
   update: (params: {
     node?: string | null
     isSecureMode?: boolean
@@ -29,8 +37,7 @@ const SettingsOperations = (config: Config): SettingsOperationsInterface => {
               Authorization: `Bearer ${config.apiKey}`
             }
           }
-        }
-      )
+        )
 
         return [result.data, null]
       } catch (error: any) {
