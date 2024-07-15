@@ -20,6 +20,7 @@ export interface FileOperationsInterface {
     storageClasses?: string[]
     setProgress?: (progress: number) => void
     signal?: GenericAbortSignal | undefined
+    filePath?: string
   }) => DataResponsePromise<File>
   directEdgeUpload: (params: {
     file: any
@@ -113,7 +114,8 @@ const FileOperations = (config: Config): FileOperationsInterface => {
       directoryId,
       storageClasses,
       setProgress,
-      signal
+      signal,
+      filePath
     }) => {
       verifyAuthorizedCommand(
         config.scope,
@@ -124,6 +126,8 @@ const FileOperations = (config: Config): FileOperationsInterface => {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('directoryId', directoryId)
+
+      filePath && formData.append('filePath', filePath)
       if (storageClasses && storageClasses.length > 0)
         formData.append('storageClasses', JSON.stringify(storageClasses))
 
