@@ -35,6 +35,15 @@ export interface File {
   edgeURL: string
   dataURI: string
   isEncrypted: boolean
+  sia: {
+    eTag: string
+    health: number
+    modTime: Date
+    name: number
+    size: number
+    mimeType: string
+    image: string
+  } | null
 }
 
 export enum DSNProviders {
