@@ -23,6 +23,7 @@ import RetrievalRequestOperations, {
   RetrievalRequestOperationsInterface
 } from './server/retrievalRequest'
 import ExportOperation, { ExportOperationInterface } from './server/export'
+import DSNSOpetions, { DSNSOperationsInterface } from './server/dsns'
 export interface InitConfig {
   apiKey: string
 }
@@ -48,6 +49,7 @@ export interface DeltaStorageInit {
   edgeNodes: EdgeNodeOperationsInterface
   retrievalRequest: RetrievalRequestOperationsInterface
   export: (params: ExportOperationInterface) => void
+  dsns: DSNSOperationsInterface
 }
 
 const DeltaStorage = {
@@ -104,7 +106,8 @@ const DeltaStorage = {
       edgeNodes: EdgeNodeOperations(config),
       retrievalRequest: RetrievalRequestOperations(config),
       export: ({ id, signal, setProgress }) =>
-        ExportOperation(config)({ id, signal, setProgress })
+        ExportOperation(config)({ id, signal, setProgress }),
+      dsns: DSNSOpetions(config)
     }
   }
 }
