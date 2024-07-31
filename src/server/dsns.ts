@@ -21,8 +21,14 @@ const DSNSOpetions = (config: Config): DSNSOperationsInterface => {
         'READ_FILE is not allowed'
       )
 
+      const formData = new FormData()
+      formData.append('file', file)
+      if (filePath) formData.append('filePath', filePath)
+      if (replicateTo)
+        formData.append('replicateTo', JSON.stringify(replicateTo))
+
       try {
-        const res = await axios.get(`${config.host}/dsns/upload`, {
+        const res = await axios.post(`${config.host}/dsns/upload`, formData, {
           headers: {
             Authorization: `Bearer ${config.apiKey}`
           }
