@@ -21,7 +21,7 @@ export interface FileOperationsInterface {
     setProgress?: (progress: number) => void
     signal?: GenericAbortSignal | undefined
     filePath?: string
-    replicateTo?: Record<'SIA', string>
+    replicateTo?: Record<'SIA', boolean>
   }) => DataResponsePromise<File>
   directEdgeUpload: (params: {
     file: any
@@ -128,11 +128,11 @@ const FileOperations = (config: Config): FileOperationsInterface => {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('directoryId', directoryId)
-      if (filePath) formData.append("filePath", filePath)
-      if (replicateTo) formData.append("replicateTo", JSON.stringify(replicateTo))
+      if (filePath) formData.append('filePath', filePath)
+      if (replicateTo)
+        formData.append('replicateTo', JSON.stringify(replicateTo))
       if (storageClasses && storageClasses.length > 0)
         formData.append('storageClasses', JSON.stringify(storageClasses))
-
 
       try {
         const res = await axios.post(`${config.host}/files/upload`, formData, {

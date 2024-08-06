@@ -8,7 +8,7 @@ export interface DSNSOperationsInterface {
   upload: (params: {
     file: any
     filePath: string
-    replicateTo: Record<'SIA', string>
+    replicateTo: Record<'SIA', boolean>
   }) => DataResponsePromise
 }
 
