@@ -10,6 +10,7 @@ export interface DSNSOperationsInterface {
     filePath: string
     replicateTo: Record<'SIA', boolean>
   }) => DataResponsePromise
+  metadata: (params: { cid: string; SIA: boolean }) => DataResponsePromise
 }
 
 const DSNSOpetions = (config: Config): DSNSOperationsInterface => {
@@ -33,6 +34,29 @@ const DSNSOpetions = (config: Config): DSNSOperationsInterface => {
             Authorization: `Bearer ${config.apiKey}`
           }
         })
+
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
+    },
+    metadata: async ({ cid, SIA }) => {
+      verifyAuthorizedCommand(
+        config.scope,
+        OPERATION_SCOPE.READ_FILE,
+        'READ_FILE is not allowed'
+      )
+
+      try {
+        const res = await axios.post(
+          `${config.host}/dsns/metadata/${cid}`,
+          { SIA },
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
+          }
+        )
 
         return [res.data, null]
       } catch (error: any) {
