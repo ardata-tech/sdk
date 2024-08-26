@@ -5,6 +5,7 @@ import { OPERATION_SCOPE } from '../constants'
 import { DataResponsePromise } from '../types'
 
 export interface DSNSOperationsInterface {
+  sync: (params: Record<'SIA', boolean>) => DataResponsePromise
   upload: (params: {
     file: any
     filePath: string
@@ -15,6 +16,29 @@ export interface DSNSOperationsInterface {
 
 const DSNSOpetions = (config: Config): DSNSOperationsInterface => {
   return {
+    sync: async ({ SIA }) => {
+      verifyAuthorizedCommand(
+        config.scope,
+        OPERATION_SCOPE.UPLOAD_FILE,
+        'UPLOAD_FILE is not allowed'
+      )
+
+      try {
+        const res = await axios.post(
+          `${config.host}/dsns/sync`,
+          { SIA },
+          {
+            headers: {
+              Authorization: `Bearer ${config.apiKey}`
+            }
+          }
+        )
+
+        return [res.data, null]
+      } catch (error: any) {
+        return [null, error.response.data]
+      }
+    },
     upload: async ({ file, filePath, replicateTo }) => {
       verifyAuthorizedCommand(
         config.scope,
