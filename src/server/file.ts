@@ -421,7 +421,7 @@ const FileOperations = (config: Config): FileOperationsInterface => {
 
         replicationData.Sia.status =
           replicationData.Sia.metadata === null ||
-          !replicationData.Sia.metadata?.object.eTag.length
+          !replicationData.Sia.metadata.eTag.length
             ? 'In Progress'
             : 'Replicated'
 

@@ -35,15 +35,7 @@ export interface File {
   edgeURL: string
   dataURI: string
   isEncrypted: boolean
-  sia: {
-    eTag: string
-    health: number
-    modTime: Date
-    name: number
-    size: number
-    mimeType: string
-    image: string
-  } | null
+  sia: SiaMetadataResponse
 }
 
 export enum DSNProviders {
@@ -53,32 +45,70 @@ export enum DSNProviders {
   FILEFILEGO
 }
 
-export interface SiaMetadata {
+export interface SiaMetadataResponse {
   hasMore: boolean
-  object: {
-    eTag: string
-    health: number
-    mimeType: string
-    modTime: Date
-    name: string
-    size: number
-    key: string
-    slabs: Array<{
-      slab: {
-        health: number
-        key: string
-        minShards: number
-        shards: Array<{
-          host: string
-          root: string
-        }>
-      }
-      offset: number
-      length: number
-    }> | null
-    partialSlab: any | null
-  }
+  image: string
+  object: SiaMetadata
 }
+
+export interface SiaMetadata {
+  eTag: string
+  health: number
+  modTime: string
+  name: string
+  size: number
+  mimeType: string
+  key: string
+  slabs: Slab[]
+}
+
+interface Slab {
+  slab: SlabDetails
+}
+
+interface SlabDetails {
+  health: number
+  key: string
+  minShards: number
+  shards: Shard[]
+}
+
+interface Shard {
+  contracts: Contracts
+  latestHost: string
+  root: string
+}
+
+interface Contracts {
+  [hostId: string]: string[]
+}
+
+// export interface SiaMetadata {
+//   hasMore: boolean
+//   object: {
+//     eTag: string
+//     health: number
+//     mimeType: string
+//     modTime: Date
+//     name: string
+//     size: number
+//     key: string
+//     slabs: Array<{
+//       slab: {
+//         health: number
+//         key: string
+//         minShards: number
+//         shards: Array<{
+//           host: string
+//           root: string
+//         }>
+//       }
+//       offset: number
+//       length: number
+//     }> | null
+//     partialSlab: any | null
+//   }
+// }
 
 export interface IPFSMetadata {
   name: string
